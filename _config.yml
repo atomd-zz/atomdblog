@@ -9,8 +9,8 @@ pygments: true
 # Themes are encouraged to use these universal variables 
 # so be sure to set them if your theme uses them.
 #
-title : Solo
-tagline: the journey is the destination; enlightenment has to be rediscovered in every day of practice.
+title : The Other Shore
+tagline: The journey is the destination; enlightenment has to be rediscovered in every day of practice.
 author :
   name : atomd
   email : dwb319@gmail.com
@@ -112,7 +112,7 @@ JB :
   #
   sharing :
     provider : false
-    
+
   # Settings for all other include helpers can be defined by creating 
   # a hash with key named for the given helper. ex:
   #
