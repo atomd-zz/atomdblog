@@ -68,6 +68,7 @@ task :post do
     post.puts "---"
     post.puts "{% include JB/setup %}"
   end
+  abort("Can not make picture directory.") if !system("mkdir -p images/#{date}-#{slug}")
 end # task :post
 
 # Usage: rake page name="about.html"
