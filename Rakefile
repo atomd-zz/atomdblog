@@ -100,6 +100,11 @@ task :preview do
   system "jekyll --auto --server"
 end # task :preview
 
+desc "Publish the blog."
+task :publish do
+  system "sh jekyll-publish.sh"
+end # task :publish
+
 # Public: Alias - Maintains backwards compatability for theme switching.
 task :switch_theme => "theme:switch"
 
