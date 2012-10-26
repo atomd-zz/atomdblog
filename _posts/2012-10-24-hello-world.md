@@ -3,8 +3,8 @@ layout: post
 title: "Hello World"
 date: 2012-10-24 19:03
 description: ""
-category: 随笔
-tags: [生活]
+category: essay
+tags: [life]
 ---
 {% include JB/setup %}
 
@@ -17,6 +17,4 @@ tags: [生活]
 * 支持Markdown等的标记语言，无关格式和样式，可以方便转到其他格式。
 
 希望自己玩得开心！
-
-
 
