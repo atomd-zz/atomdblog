@@ -9,7 +9,7 @@ module Jekyll
 
     def render(context)
       page_url = context.environments.first["page"]["url"]
-      who, cares , year, month, day, title = *page_url.match(MATCHER)
+      who, cares, year, month, day, title = *page_url.match(MATCHER)
       return "/images/#{year}-#{month}-#{day}-#{title}/#{@orig_img}"
     end
   end
