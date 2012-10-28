@@ -14,6 +14,8 @@
 html {
 	background-color: @main-bg;
 	color: @main-font-color;
+	-webkit-text-size-adjust: 100%;
+	-ms-text-size-adjust: 100%;
 }
 
 /* LINK */
@@ -41,7 +43,6 @@ pre {
 	font-family: "Bitstream Vera Sans Mono", "Courier New", Courier, monospace;
 	margin-left: 0;
 	margin-right: 0;
-	padding: @line-height / @em;
 	overflow: auto;
 	-webkit-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(255, 255, 255, 0.6);
 	-moz-box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 0 rgba(255, 255, 255, 0.6);
@@ -119,24 +120,6 @@ pre {
 			&:visited { border-bottom: 1px dotted darken(@accent-color, 10%); }
 			&:hover { border-bottom: 1px dotted lighten(@accent-color, 10%); }
 		}
-
-		blockquote {
-			border-left: 1em solid rgba(21, 25, 25, 0.8);
-			padding-left: 1em;
-			p {
-				margin-left: 0;
-				margin-right: 0;
-			}
-		}
-		ul, ol, dl {
-            padding-left: 2em;
-            margin-bottom: 0;
-        }
-		ul { list-style: square; }
-		ol { list-style: decimal; }
-		li, dt, dd {
-			h1, h2, h3, h4, h5, p, ul, ol, dl, blockquote, .hasGrid { margin-left: 0; margin-right: 0; }
-		} 
 		p code, li code {
 			margin: 0 2px;
 			padding: 2px 5px;
@@ -152,10 +135,10 @@ pre {
 		img {
 			display: block;
 			margin-left: 0;
-            max-width: 80%;
+            max-width: 75%;
 		}
-		img.left { margin-right: 16px; }
-		img.right { margin-left: 16px; }
+		img.left { margin-right: 25px; }
+		img.right { margin-left: 25px; }
 
 		.date-publish { margin-bottom: 0; }
 		.list-linear .list-head { margin-right: 4px; }
