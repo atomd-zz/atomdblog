@@ -1,3 +1,2 @@
 User-agent: * 
-Disallow: /essay/
-Disallow: /Essay/
+Disallow: / 
