@@ -85,8 +85,12 @@ del {
 	text-decoration: line-through;
 }
 
-address, caption, cite, code, dfn, em, th, var {
+address, caption, cite, code, dfn, th, var {
 	font-style: normal;
+	font-weight: 400;
+}
+
+em {
 	font-weight: 400;
 }
 
@@ -244,15 +248,8 @@ h1, h2, h3, h4, h5, h6{
 	border-radius:0;
 }
 
-/* TODO: 供着重号使用 */
-.typo-em, .typo em {
-	font-weight: 700;
-}
-
 /* TODO: 供首字下沉使用 */
-.typo-first{
-
-}
+.typo-first{ }
 
 .typo li h1,.typo dt h1,.typo dd h1,.typo li h2,.typo dt h2,.typo dd h2,.typo li h3,
 .typo dt h3,.typo dd h3,.typo li h4,.typo dt h4,.typo dd h4,.typo li h5,.typo dt h5,
