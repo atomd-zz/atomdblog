@@ -23,23 +23,22 @@ tags: [parallel, cache]
 
 ![figure-1]({% image_url common-memory-hierarchies-found-in-multiprocessors.png %})
 
-### 高速缓存的角色定位
-从存储器层次上看，程序员对存储器容量和速度的期望是无限的，但是和存储器的成本想
-矛盾。每一层都要从一个较大的存储器空间中把地址映射到一个较小的但是更快的上层容
-器。而高速缓存就是介于CPU、寄存器与主存之间的一层。
+从存储器层次上看，程序员对存储器容量和速度的期望是无限的，但是和存储器的成本相矛盾。每一层都要从一个较大的存储器空间中把地址映射到一个较小的但是更快上层容器。而高速缓存就是介于CPU、寄存器与主存之间的一层。
 
-而高速缓存总是扮演着重要角色，对于处理器而言，高速缓存可以减少平均数据访问的时
-间。而对于共享的互连设备和存储系统而言，可以减少每个处理器需要的通信带宽。
+而高速缓存总是扮演着重要角色，对于处理器而言，高速缓存可以减少平均数据访问的时间。而对于共享的互连设备和存储系统而言，可以减少每个处理器需要的通信带宽。
 
-下图表明四类层次，并与多处理器的规模相对应。
+图中表明了四类层次模型，与多处理器的规模相对应。
 
-- a 图中是互连设备位于处理器和共享的一级高速缓存之间，而高速缓存连接到共享主存子系统上
-  。处理器数量相对较少2-8个。
-- b 图中是在基于总线的共享存储方式下，互连设备是共享总线，位于处理器的私有缓存
-  和共享的主存子系统之间。适用于中小规模，可以支持20-30个处理器。
-- 对于c 图，互连设备不一定是总线，而是点对点互连网络。同时主存划分为许多的逻辑模块，并介
-  入互连网络。这方式仍然是具有均匀的存储器访问模型。
-- 
+- (a) 图中是互连设备位于处理器和共享的一级高速缓存之间，而高速缓存连接到共享主存子系统上。处理器数量相对较少2-8个。
+- (b) 图中是在基于总线的共享存储方式下，互连设备是共享总线，位于处理器的私有缓存和共享的主存子系统之间。适用于中小规模，可以支持20-30个处理器。
+- (c) 图中，互连设备不一定是总线，而是点对点的互连网络。同时主存储器划分为许多的逻辑模块，并接入互连网络。这方式仍然是具有均匀的存储器访问模型。
+- (d) 图中是分布式的存储方式，非对称的。可扩展的互联设备位于处理器节点之间，数据分散到每个处理器的本地主存中，由于处理器的私有缓存可以尽量减少跨网络的数据访问。
+
+####名词解释
+- DSM : 分布式共享存储器 ( Distributed shared memory )
+- SMP : 对称多处理器技术 ( Symmetric multiprocessing )
+- CC-NUMA : 一致性高速缓存非均匀存储访问模式 ( Cache Coherent Non-Uniform Memory Architecture )。主存在物理上是分布的，具有非均匀的访问代价，其每个节点可以看作SMP，实际上是一个DSM多处理机系统。
+
 - - -
 
 ##The Cache Coherence Problem
@@ -50,13 +49,38 @@ tags: [parallel, cache]
 _Write back cache_ or _Write through cache_ ?   
 _Write invalidate_  or _Write update_ ？
 
+多处理器中的高速缓存一致性问题是普遍存在的，而且对计算机性能有着重大的影响。其中缓存一致性 （ Cache Coherence ) 保证的是： __总是能读到最新写入的值__。
+
+如图所示，每个处理器至少有一级的私有高速缓存，那么存储块的副本出现在一个或多个处理器的高速缓存中，那么怎么保证访问的是最新写入的值正是我们本文讨论的问题。
+
+面对高速缓存一致性问题，有两个基本的取舍点：
+
+- 通知机制：写失效协议 或者 写更新协议
+- 写入类型：直写式高速缓存(写直达）或者 写回式高速缓存
+
+对于__通知机制__ ： 由于写更新协议必须将所有的写操作广播给共享的高速缓存，需要更大的带宽。而且对于进程迁移后，没有必要更新的缓存在没有置换前也会一直更新。所以近期的多处理器都会选择执行写失效协议。
+
+对于__写入类型__ ： 写直达查找高速缓存最新值非常容易，但是对互连设备的带宽要求比较高，所以大多数处理器方案并不会采用。但是对于写回式，会引入更多的复杂性。多个处理器写入单元u，最终到达主存的值由包含u的高速缓存替换顺序决定，而与各处理器对u进行写操作顺序无关。所以采用写回式需要设计相应的协议来保证。
+
+我们下面重点集中关注基于写失效和写回式的缓存一致性问题。
+
 - - -
 
 ##Coherency vs. Consistency
-Cache coherency and consistency define the action of the processors to maintain coherence. 
+Cache coherency and consistency define the action of the processors to maintain coherence.
 
 * `Coherency` defines what value is returned on a read
 * `Consistency` defines when it is available
+
+这里需要澄清两个概念：
+
+- Coherency (缓存一致性)
+  * 缓存一致性需要保证读时需要保证什么值，总是返回最新写入的值。
+  * 写操作是串行，按顺序写入a、b，读出的顺序不能为b、a。
+
+- Consistency (存储一致性)
+  * 存储一致性需要保证一个值什么时候才能读取。
+  * 需要建立存储一致性(同一性, Consistency)模型，模型从严格到宽松。越宽松也就越要程序员来显式地使用同步原语、原子操作来保证一致性。
 
 - - -
 
@@ -64,11 +88,17 @@ Cache coherency and consistency define the action of the processors to maintain 
 
 ###Snooping
 1. The caches are all accessible via some __broadcast__ medium (a bus or switch)
-2. All cache controllers monitor or __snoop on the medium__ to determine whether or not they have a copy of a block that is requested
+2. All cache controllers __monitor or snoop__ on the medium to determine whether or not they have a copy of a block that is requested
 
 ###Directory Based
 1. The sharing status of a block of physical memory is kept in just one location, called the __directory__
 2. using __point-to-point messages__ sent between the processors and memories to keep caches consistent
+
+保证高速缓存一致性的协议通常有两个: 监听式和基于目录
+
+监听式的协议 ，通过在总线上广播来在获得高速缓存。处理器的缓存控制器通过在总线上监听来发现是否在缓存中有副本。总线的根本性质是: 总线是连接几台设备的单独一组导线，其中每一设备可以观察到每一个总线事务，这就是一种广播形式。正如前面所说，这种集中式总线架构的规模在20-30个处理器，多于的话就会出现瓶颈。
+
+对于基于目录的协议，该协议保存了每个缓存行的状态，称之为目录。目录中的信息包括哪个缓存行拥有该块的副本、是否处于脏状态等。通过对目录的查询，可以通过点到点的通讯来维护缓存一致性，从而避免广播。为了防止目录成为瓶颈，可以使目录本身也随着缓存存储器来分布，从而更易扩展。
 
 - - -
 
@@ -78,6 +108,10 @@ Cache coherency and consistency define the action of the processors to maintain 
 * All caches see the same sequence of writes.
 * The cache coherence traffic creates another limit on the scale and the speed of the processors. 
 ![figure-3]({% image_url snoopy-cache-coherent-multiprocessor.png %})
+
+- 处理读缺失 ： 实现写失效协议的关键是使用总线或其他广播媒介来完成无效操作。处理器首先取得总线控制权然后广播无效数据的地址。所有处理器监听后检查是否存在副本，如果有则设置无效。
+
+- 处理共享未写回的缓存行的写操作 : 向一个共享块执行写操作时，写操作需要获得对总线的访问权才能广播无效性操作。如果两个处理器同时对一个共享块进行写操作，其广播无效操作的请求会通过总线仲裁实现串行化。
 
 - - -
 
@@ -105,6 +139,8 @@ Cache coherency and consistency define the action of the processors to maintain 
 * Coherence state maintained in a directory associated with memory
 * Requests to a memory block do not need broadcasts
 ![figure-5]({% image_url a-scalable-multiprocessor-with-directories.png %})
+
+我们的讨论主要是基于分布式存储器多处理系统。正如监听协议一样，目录协议也必须实现两个操作 : 处理读缺失和处理共享未写回的缓存行的写操作。为了实现这些操作，目录必须跟踪每个缓存行的状态。
 
 - - -
 
