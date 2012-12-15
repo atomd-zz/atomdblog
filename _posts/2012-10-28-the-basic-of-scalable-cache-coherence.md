@@ -133,6 +133,25 @@ Cache coherency and consistency define the action of the processors to maintain 
 * BusRdX
 * BusWB
 
+监听式协议是一种分布式算法，由一组相互作用的有限状态自动机来表示。高速缓存控制器中有两套输入：
+1. 由处理器发出的存储器请求。
+2. 总线监听器为了通知其它高速缓存而发起的总线事务。
+
+MESI协议可以分为四个状态：M (已修改的)、S (共享的)、E (独占的)、I (失效的)
+
+处理器发起的请求：读请求(PrRd)、写请求(PrWr)
+总线引起的动作：
+
+- 总线读(BusRd)：这过程由高速缓存扑空的PrRd产生。高速缓存控制器将地址放在总线上， 请求一个只读的拷贝。
+- 总线排它说(BusRdx)：这个过程由写请求产生，PrWr要读的存储块要么不在高速缓存中，或者在但是不处于M 状态。请求一个它要修改的排它拷贝，主存储器(或者其它高速缓存)提供后，其它的缓存将失效，一旦高速缓存得到了排它拷贝，写操作就可以在高速缓存中完成。
+- 总线写(BusWB)：由高速缓存控制器在回写时产生。
+
+这里有三点需要澄清：
+
+- 为什么需要总线排它读，而不是直接写呢？因为协议中是以缓存行为单位的，写入时需要获得缓存行的其他数据再进行写入，来保证同一时刻只有一个缓存行存在脏数据。
+- MESI协议和MSI协议相比，引入了 E 状态，所以需要共享信号 S，来判断数据在高速缓存中是否是独占的。
+- 在BusRd中，由主存储器来提供读丢失的数据。而在Illinois原始版本中提供数据的是缓存，这需要一种缓存到缓存的技术。比如当缓存是SRAM，主存是DRAM，前者比较快。
+
 - - -
 
 ##Directory Based
@@ -146,6 +165,10 @@ Cache coherency and consistency define the action of the processors to maintain 
 
 ##Example: DASH
 ![figure-6]({% image_url block-diagram-of-a-2x2-bash-prototype.png %})
+
+下面我们以斯坦福经典的DASH协议为例子来说明基于目录式缓存一致性协议。
+
+这种结构是由一定数目的处理结点构成的，结点之间通过一个高带宽、低延迟的互连网络连接。DASH系统的可扩展性要求尽量避免广播，而且不依赖于任何具体的网络拓扑结构。
 
 - - -
 
@@ -164,10 +187,32 @@ Cache coherency and consistency define the action of the processors to maintain 
 - Mesh interconnected network
 ![figure-7]({% image_url dash-architecture.png %})
 
+
+DASH每个节点(cluster) 是由4个高性能处理器组成，物理存储器分布在各结点中，每个结
+点都可访问整个存储器。处理器组内的高速缓存间是利用基于总线的监听方案来维持一致
+性，而组间则利用分布式基于目录的一致性协议维持高速缓存一致性。
+
+每个处理器有两级缓存，其中2级缓存的作用是改变1级缓存写直达的缓存策略为写回式策略，并为总线监听提供额外的缓存标记。2级缓存监听总线并维护了节点内的高速缓存一致性，采用Illinois协议。
+
+总线提供了总线到缓存，缓存到缓存的传输能力。因为不支持对跨节点访问的分离事务，将MPBUS协议扩展，支持重发机制。为了避免不必要的重发，发送请求的处理器从仲裁器屏蔽掉，直到对方答复的消息到达，缓存后再将处理器解开屏蔽，重发请求后获得所请求的远程数据。
+
+目录控制器主要维护了节点间的缓存一致性，并提供了到互联网络的接口。
+
 - - -
 
 ##DASH Directory board
 ![figure-8]({% image_url directory-board-block-diagram.png %})
+
+目录控制板器是单块印刷电路，上面有五个主要部件：
+
+- DC：目录控制器，含有对应于该处理器组内的内存的目录存储器，还负责转发对远程组的请求和回应。
+- PCPU：伪CPU，代表远程组CPU。负责转发和缓存远程组CPU的请求并沿着组内总线将请求发送出去。
+- RC：响应控制器，负责追踪本地组一些未完成的请求并接受从远程组返回的相应的相应回应。
+- Mesh * 2：互联网络是由一组mesh网络构成，分别用来处理请求和回应的。
+
+目录存储器有一组目录项组成，每个存储块对应一项。目录项是由一位状态组 (1 bit) 和一个指针位向量 (16 bits) 组成。其中使用位向量来维护哪个节点拥有内存块的副本，状态位来记录是否有一个共享或者独占的节点。DC会随着访问内存的事务一起访问目录存储项并决定其在网络上发送的消息或产生的动作。
+
+RC中还维护了RAC (remote access cache)，RAC是保存当前未完成的状态，并以处理器第5块高速缓存缓存了远程组返回的数据，并且等待远程回应的处理器解开总线屏蔽，RAC在通过高速缓存间传输提供数据。RAC和本地组的四个处理器的缓存一起组成了五路组关联的缓存。
 
 - - -
 
@@ -187,6 +232,21 @@ Cache coherency and consistency define the action of the processors to maintain 
 * Owning cluster for a block is the home cluster except if dirty-remote
 * Owning cluster responds to requests and updates directory state
 
+针对处理器组和存储器，有以下的概念：
+
+- 本地组(Local cluster)：发起一个给定请求的某处理器组
+- 总部组(Home cluster)：给定物理地址的主存和目录所在的处理器组
+- 远程组(Remote cluster)：除了以上两种之外的其它处理器组
+- 拥有组(Owing cluster)：缓存包含数据副本的处理器组
+- 当地存储器(Local memory)：是与当地组相关联的那部分主存
+- 远程存储器(Remote memory)：是那些总部不在本地的其它存储器
+
+一个存储器块的状态有三种：
+
+- Uncached-remote：即所有的远程组的高速缓存都不含此块的副本
+- Shared-remote：有一个或多个远程组含有此块副本且副本块与存储器块是一致的
+- Dirty-remote：仅有一个远程组含有此块，此块已经修改，与存储器相应的块不一致。
+
 - - -
 
 ##Read Requests
@@ -198,7 +258,7 @@ Cache coherency and consistency define the action of the processors to maintain 
     - Dirty: data transferred over bus to requester, RAC takes ownership of cache line
 * If address not in local cluster, processor retries bus operation, and request is sent to home cluster, RAC entry is allocated
 * If the block is in an uncached-remote or shared-remote state the directory controller sends the data over the reply network to the requesting cluster. 
-* Requests to remote memory with directory in dirty-remote state explained in paper 2 figure 4
+* Requests to remote memory with directory in dirty-remote state explained in the figure
 ![figure-9]({% image_url flow-of-Read-Request-to-remote-memory-with-directory-in-dirty-remote-state.png %})
 
 - - -
@@ -216,8 +276,8 @@ Cache coherency and consistency define the action of the processors to maintain 
     - Request is sent to home cluster
     - RAC entry is allocated
 * If the memory block is in an uncached-remote the data and ownership are immediately sent back over the reply network.
-* Requests to remote nodes in shared-remote state explained in paper 2 figure 5
-* Requests to remote nodes in dirty-remote state explained in the next.
+* Requests to remote nodes in shared-remote state explained in the figure
+* Requests to remote nodes in dirty-remote state explained in the figure
 ![figure-10]({% image_url flow-of-read-exclusive-request-to-remote-memory-with-directory-in-shared-remote-state.png %})
 ![figure-11]({% image_url flow-of-read-exclusive-request-to-remote-memory-with-directory-in-dirty-remote-state.png %})
 
@@ -248,6 +308,19 @@ Cache coherency and consistency define the action of the processors to maintain 
         * Limited Pointers without Broadcast Scheme ($$ Dir_i NB $$)
         * Limited Pointers superset Scheme ($$ Dir_i X $$)
 
+目录的组织通常分为两种方案：基于指针的方案和基于链表的方案。
+
+DASH的原型系统使用的基于指针的 Full Bit Vector 的方案来记录目录信息，但是其内存随着处理器数量的平方而线性增加。
+
+除此之外，也可以通过双向链表把目录信息维护在缓存中，这样虽然减低了内容的开销。但是复杂性极大地增加，尤指的是维护链表的时间复杂度和实现的难度。
+
+所以就采用优化过的有限指针的方案，指的是不保存所有处理器的信息，而保存有限个。
+但是这时就需要解决指针数量溢出的问题：
+
+* $$ Dir_i B $$ 设置广播位，当发生溢出时向所有缓存广播失效。
+* $$ Dir_i NB $$ 当发生溢出时，通过置换的方式失效其中一个缓存。
+* $$ Dir_i X $$ 保存两个指针，当指针溢出，同样的内存转化为一个组合指针。2bits 表示指针的一个bit位的3个状态：1、0、both。这种方式将组合指针映射到一个指针集合，这样就解决了指针溢出的问题。
+
 ##Optimization Methods
 __New Proposals__ to reduce memory requirements of directory schemes without significantly compromising performance and communication requirements.
 
@@ -260,12 +333,22 @@ __New Proposals__ to reduce memory requirements of directory schemes without sig
     - Replacing an entry of the sparse directory after invalidating all processor caches which that entry points to
     - Replacement policies
 
+对基于目录的方案，其内存占用有两个维度，一个是单条目录信息的内存占用，另一个是
+目录的条目数量。针对这两个维度，提出另外两种方案：
+
+- 粗粒度向量(Coarse Vector Scheme)：一个bit代表一个处理器集合，当失效时只失效这个集合对应的处理器。
+- 稀疏目录(Sparse Directories)：因为缓存相对于内存非常小，不需要保存所有目录项的信息。根据缓存的思想，只保存最热的目录项，在失效完相应的缓存后将目录项置换出去。
+
+这两种方案在内存开销和通信成本方面比先前的方案有着显著减低。
+
 - - -
 
 ##False Sharing vs. Spatial Locality
-__False sharing__ occurs when threads on different processors modify variables that reside on the same cache line. This invalidates the cache line and forces an update, which hurts performance.
+__False sharing__ occurs when threads on different processors modify different variables that reside on the same cache line. This invalidates the cache line and forces an update, which hurts performance.
 
 ![figure-12]({% image_url false-sharing.png %})
+
+多处理器共享一个缓存行，当同时修改不同的变量，就会产生不必要的失效，这极大影响了性能。缓存行的话可以减少读扑空，但是同时会引入更多伪共享，这就是空间局部性和伪共享的矛盾。
 
 ###Conclusion
 1. To improve the performance of caches, trying to enhance the spatial locality of multiprocessor data is an approach at least as, or even more promising, than to remove false sharing.
@@ -279,6 +362,10 @@ __False sharing__ occurs when threads on different processors modify variables t
  Record alignment                       |
 
 `note`: (+) Leaving it up to the programmer to pad the data structure if so desired.
+
+- 为了提高缓存的性能，增强空间局部性比消除伪共享更有效。因为对于扑空率的影响，空间局部性比伪共享的作用更加显著。
+- 对程序员透明的数据布局优化和不限制在常规代码中使用相关技术将有助于减少缓存的扑空。
+- 对于程序员来讲，alignment 和 padding 是非常有效的技术来避免伪共享。
 
 - - -
 
