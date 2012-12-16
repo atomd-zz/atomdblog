@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Hello World"
+title: "hello, world"
 date: 2012-10-24 19:03
 description: ""
 category: essay

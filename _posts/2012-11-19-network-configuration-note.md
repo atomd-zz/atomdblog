@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Network Configuration Note"
+title: "网络配置小记"
 description: "Some note about network configuration."
 category: technology
 tags: [network, configuration]

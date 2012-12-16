@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "The Basic of Scalable Cache Coherence"
+title: "高速缓存一致性的相关笔记和演讲稿"
 description: "My homework to introduce the basic of scalable cache coherence."
 category: technology
 tags: [parallel, cache]
