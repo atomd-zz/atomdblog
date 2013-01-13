@@ -27,6 +27,7 @@ git add -A
 git commit -m "Auto generated at $(date)"
 
 git checkout -q master
+git push -f origin gh-pages
 echo ''
 
-git push --all
+git push origin master
