@@ -1,9 +1,9 @@
 ---
 layout: post
 title: "Hadoop集群的安装和配置"
-description: ""
-category: 
-tags: []
+description: "Hadoop Study"
+category: technology
+tags: [hadoop, installation, configuration]
 ---
 {% include JB/setup %}
 
@@ -21,6 +21,8 @@ tags: []
 
 * VMware Workstation 9.0
 * ubuntu-12.04.1-desktop-i386.iso
+* hadoop: hadoop-1.0.4.tar.gz
+* Java JDK: jdk-7u7-linux-i586.tar.gz
 
 ###主要步骤
 
