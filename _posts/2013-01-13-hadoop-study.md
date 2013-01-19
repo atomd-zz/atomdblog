@@ -1,17 +1,15 @@
 ---
 layout: post
-title: "Hadoop集群的安装和配置"
+title: "Hadoop学习笔记"
 description: "Hadoop Study"
 category: technology
 tags: [hadoop, installation, configuration]
 ---
 {% include JB/setup %}
 
-因为实验室的项目要用到Hadoop，参加了ChinaHadoop办的Hadoop大数据平台的在线培训。用的是YY的平台，第一次用感觉问题不少，尤其是其中的白板功能。前几日和导师吃饭的时候，他说上课是没有效率的，研究生应该以自学为主。我认同，因为学校一些课真的比较水，但我觉得不管上课还是自学都取决于交流的质量。如果真的有富有经验的人愿意传道授业解惑，并且没有交流障碍，无疑会有很大的帮助，也会避免走很多弯路，这样的课是用很大价值的，完全值得300的价格。这里也推荐下这个课:)
+因为实验室的项目要用到Hadoop，参加了ChinaHadoop办的Hadoop大数据平台的在线培训。用的是YY的平台，第一次用感觉问题不少，尤其是其中的白板功能。我觉得不管上课还是自学都取决于交流的质量。如果真的有富有经验的人愿意传道授业解惑，并且没有交流障碍，无疑会有很大的帮助，也会避免走很多弯路，这样的课是用很大价值的，完全值得300的价格。这里也推荐下这个课:)
 
-在第一讲的时候主要讲到了Hadoop的前世今身和安装配置方法。这里简单记录下：
-
-因为使用YY，所以选择在Windows下使用VMware来管理虚拟机。
+###虚拟机配置和相关软件
 
  机器角色        | IP             | 机器名 | 用户名 | 配置
 :---------------:|:--------------:|:------:|:------:|:-----------------:
@@ -24,7 +22,7 @@ tags: [hadoop, installation, configuration]
 * hadoop: hadoop-1.0.4.tar.gz
 * Java JDK: jdk-7u7-linux-i586.tar.gz
 
-###主要步骤
+###Hadoop集群的安装和配置
 
 ####创建虚拟机X001
 
@@ -141,32 +139,32 @@ tags: [hadoop, installation, configuration]
 
     <configuration>
     <property>
-        <name>hadoop.tmp.dir</name>   
-        <value>/usr/hadoop-1.0.4/tmp.dir</value>   
+        <name>hadoop.tmp.dir</name>
+        <value>/usr/hadoop-1.0.4/tmp.dir</value>
         <description>A base for other temporary dirs.</description>
     </property>
-    <property>   
-        <name>fs.default.name</name>   
+    <property>
+        <name>fs.default.name</name>
         <value>hdfs://192.168.32.111:9000</value>
     </property>
     </configuration>
 
 #####修改 hdfs-site.xml， permision为false是为了开发方便，replication副本数为2（缺省值为3），因为测试环境中一共是3个节点。
-    $ vim hdfs-site.xml 
+    $ vim hdfs-site.xml
 
     <configuration>
     <property>
         <name>dfs.replication</name>
-        <value>2</value> 
-    </property> 
+        <value>2</value>
+    </property>
     <property>
-        <name>dfs.permissions</name> 
+        <name>dfs.permissions</name>
         <value>false</value>
     </property>
     </configuration>
 
 #####修改mapred-site.xml
-    $ vim mapred-site.xml 
+    $ vim mapred-site.xml
     <configuration>
     <property>
         <name>mapred.job.tracker</name>
@@ -175,10 +173,10 @@ tags: [hadoop, installation, configuration]
     </configuration>
 
 #####修改masters和slaves文件
-    $ cat masters 
+    $ cat masters
     192.168.32.111
 
-    $ cat slaves 
+    $ cat slaves
     192.168.32.111
     192.168.32.112
     192.168.32.113
@@ -236,4 +234,94 @@ tags: [hadoop, installation, configuration]
 ####通过Web查看节点状态
 访问http://192.168.32.111:50030 或 http://192.168.32.111:50070 来查看集群的相关信息
 
+###从集群删除节点
 
+__在主节点即namenode进行操作__
+
+####修改conf/hdfs-site.xml文件
+    $ vim hdfs-site.xml
+
+    <property>
+            <name>dfs.hosts.exclude</name>
+            <value>/usr/hadoop-1.0.4/conf/excludes</value>
+            <final>true</final>
+    </property>
+
+####在excludes文件中加入X002
+    $ cat excludes
+    X002
+
+####查看当前报告，可以发现所有节点的状态都是Normal
+    $ hadoop dfsadmin -report
+
+    ...
+    -------------------------------------------------
+    Datanodes available: 3 (3 total, 0 dead)
+
+    Name: 192.168.32.112:50010
+    Decommission Status : Normal
+    ...
+
+    Name: 192.168.32.113:50010
+    Decommission Status : Normal
+    ...
+
+    Name: 192.168.32.111:50010
+    Decommission Status : Normal
+    ...
+
+####执行refreshNodes命令
+可以动态刷新dfs.hosts和dfs.hosts.exclude配置，无需重启NameNode
+
+    $ hadoop dfsadmin -report
+
+    ...
+    -------------------------------------------------
+    Datanodes available: 2 (3 total, 1 dead)
+
+    Name: 192.168.32.113:50010
+    Decommission Status : Normal
+    ...
+
+    Name: 192.168.32.111:50010
+    Decommission Status : Normal
+    ...
+
+    Name: 192.168.32.112:50010
+    Decommission Status : Decommissioned
+    ...
+
+
+####查看当前报告，观察X002节点的状态
+可以发现X002节点的状态变为了Decommission in progress，等到当要删除的节点状态变为Decommission Status : Decommissioned 时，数据已经备份，并且完成删除操作。
+
+__在删除节点执行操作__
+
+refreshNode会停掉datanode，但是没有停掉tasktracker,所以需要执行
+
+    $ hadoop-daemon.sh stop tasktracker
+
+###添加节点，进行负载均衡
+
+
+####该节点上清空dfs/data/current 目录下文件
+为负载重新平衡做准备
+
+####从excludes文件中移除，再次refreshNodes
+
+    $ vim excludes
+    $ hadoop dfsadmin -refreshNodes
+
+####在X002节点上启动datanode和tasktracker
+
+    hadoop@X002:/usr/hadoop-1.0.4$ hadoop-daemon.sh start datanode
+    hadoop@X002:/usr/hadoop-1.0.4$ hadoop-daemon.sh start tasktracker
+
+
+####等到主节点检测新增节点X002后，完成负载均衡
+    $ start-balancer.sh
+    //wait ... ...
+    $ tail logs/hadoop-hadoop-balancer-X002.out
+    ...
+    The cluster is balanced. Exiting...
+    Balancing took 2.651883333333333 minutes
