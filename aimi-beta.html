@@ -1,0 +1,37 @@
+<head>
+    <title>our show</title>
+    <meta charset="utf-8">
+    <meta name="author" content="atomd">
+    <meta name="viewport" content="initial-scale=1.0, width=device-width" />
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+    <link rel="stylesheet" href="http://releases.flowplayer.org/5.3.2/skin/minimalist.css"/>
+    <script src="http://releases.flowplayer.org/5.3.2/flowplayer.min.js"></script>
+    <style>
+        @media only screen and (min-width: 760px) {
+            .fix_width {
+                width: 760px;
+            }
+        }
+        .container {
+            margin: auto;
+        }
+        body{
+            margin-top: 30px;
+            background:black;
+        }
+    </style>
+
+</head>
+<body>
+    <div class='fix_width container'>
+        <div id='show' data-ratio="0.75"
+            class="flowplayer playful is-ready is-paused is-mouseout" >
+            <video preload="auto" poster="/assets/black.png" >
+            <source src="http://aimi.oss.aliyuncs.com/aimi-beta.webm" type="video/webm" />
+            <source src="http://aimi.oss.aliyuncs.com/aimi-beta.mp4" type="video/mp4" />
+            <source src="http://aimi.oss.aliyuncs.com/aimi-beta.ogv" type="video/ogg" />
+            <source src="mp4:aimi-beta.mp4" type="video/flash" />
+            </video>
+        </div>
+    </div>
+</body>
