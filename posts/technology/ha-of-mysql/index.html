@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="http://blog.atomd.me/theme/css/style.css"> 
+    <link rel="stylesheet" type="text/css" href="http://blog.atomd.me/theme/css/pygments.css">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:800,400,300|Inconsolata' rel='stylesheet' type='text/css'>
+	<link href="/" type="application/atom+xml" rel="alternate" title="The Other Shore ATOM Feed" />
+	
+			
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type= "text/javascript">
+       MathJax.Hub.Config({
+           config: ["MMLorHTML.js"],
+           jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+           TeX: { extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"], equationNumbers: { autoNumber: "AMS" } },
+           extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+           tex2jax: { 
+               inlineMath: [ ['$','$'] ],
+               displayMath: [ ['$$','$$'] ],
+               processEscapes: true },
+           "HTML-CSS": {
+               styles: { ".MathJax .mo, .MathJax .mi": {color: "black ! important"}}
+           }
+       });
+    </script>
+
+	
+            <title>MySQL的复制与高可用性 - The Other Shore</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="atomd">
+    </head>
+
+<body>
+    <section id="navbar">
+        <div class="user_meta">
+            <h1 id="user"><a href="http://blog.atomd.me" class="">atomd</a></h1>
+            <h2>Programmer • Writer</h2>
+                        </div>
+        <div class="nav-button">
+            <ul>
+                                                                                                                                        <li><a href="https://github.com/atomd">github</a></li>
+                                                <li><a href="https://bitbucket.org/atomd">bitbucket</a></li>
+                                                <li><a href="http://www.douban.com/people/atomd/">douban</a></li>
+                                 </ul>
+         </div>
+     </section>
+
+     <section id="sidebar">
+        <div class="user_meta">
+            <h1 id="user"><a href="http://blog.atomd.me" class="">atomd</a></h1>
+            <h2>Programmer • Writer</h2>
+            <ul>
+                                                                                                            <li><a href="https://github.com/atomd">github</a></li>
+                                        <li><a href="https://bitbucket.org/atomd">bitbucket</a></li>
+                                        <li><a href="http://www.douban.com/people/atomd/">douban</a></li>
+                            </ul>
+        </div>
+        <footer>
+            <address>
+                Powered by <a href='http://docs.getpelican.com/en/latest/'>Pelican</a>,
+                <a href='https://github.com/jamescooke/pelican-svbtle#readme'>theme info</a>.
+            </address>
+        </footer>
+    </section>
+
+    <section id="posts">
+        <article>
+    <h1 class="title">
+        <a href="http://blog.atomd.me/posts/technology/ha-of-mysql/" rel="bookmark">MySQL的复制与高可用性</a>
+    </h1>
+
+    <div class='article-content'>
+        <p><strong>MySQL Replication and high Availability</strong></p>
+<hr />
+<h1>Replicaiton Implementation</h1>
+<h2>Three thread</h2>
+<ul>
+<li>Binlog dump thread</li>
+<li>Slave I/O thread</li>
+<li>Slave SQL thread</li>
+</ul>
+<h3>How MySQL replicaiton works</h3>
+<p><img alt="p-1" src="http://blog.atomd.me/static/images/ha-of-mysql/Replicaiton.png" /></p>
+<h2>Two ways</h2>
+<ul>
+<li>asynchronous</li>
+<li>semi-synchronous(5.5+)</li>
+</ul>
+<hr />
+<h2>Maatkit</h2>
+<ul>
+<li>mk-table-checksum : Perform an online replication consistency check, or checksum MySQL tables efficiently on one or many servers</li>
+<li>mk-archiver : Archive rows from a MySQL table into another table or a file</li>
+<li>mk-audit : Analyze, summarize and report on MySQL config, schema and operation</li>
+<li>mk-duplicate-key-checker : Find duplicate keys and foreign keys on MySQL tables</li>
+<li>mk-deadlock-logger : Extract and log MySQL deadlock information</li>
+<li>mk-visual-explain : Format EXPLAIN output as a tree</li>
+<li>mk-parallel-dump : Dump sets of MySQL tables in parallel</li>
+<li>mk-parallel-restore : Load files into MySQL in parallel</li>
+<li>mk-query-digest Parses logs and more. Analyze, transform, filter, review and report on queries</li>
+</ul>
+<hr />
+<h1>Replication Configuration</h1>
+<h2>Step 1 Preparation work</h2>
+<h3>Setting the Configuration</h3>
+<div class="highlight"><pre><span class="k">[mysqld]</span>
+<span class="na">log-bin</span><span class="o">=</span><span class="s">&lt;path for binary log&gt;</span>
+<span class="na">server-id</span><span class="o">=</span><span class="s">&lt;different id&gt;</span>
+<span class="na">binlog-do-db</span><span class="o">=</span><span class="s">&lt;database name&gt;</span>
+<span class="na">binlog-ignore-db</span><span class="o">=</span><span class="s">&lt;database name&gt;</span>
+</pre></div>
+
+
+<h3>Creating a User for Replication</h3>
+<div class="highlight"><pre><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">CREATE</span> <span class="n">USER</span> <span class="s1">&#39;repl&#39;</span><span class="o">@</span><span class="s1">&#39;%.mydomain.com&#39;</span> <span class="n">IDENTIFIED</span> <span class="k">BY</span> <span class="s1">&#39;slavepass&#39;</span><span class="p">;</span>
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">GRANT</span> <span class="n">REPLICATION</span> <span class="n">SLAVE</span> <span class="k">ON</span> <span class="o">*</span><span class="p">.</span><span class="o">*</span> <span class="k">TO</span> <span class="s1">&#39;repl&#39;</span><span class="o">@</span><span class="s1">&#39;%.mydomain.com&#39;</span><span class="p">;</span>
+</pre></div>
+
+
+<h2>Step 2 Get a snapshot of the master</h2>
+<ul>
+<li>Database cold backup</li>
+<li>Software with Snapshot feature(ZFS, LVM ...)</li>
+<li>mysqldump/XtraBackup</li>
+</ul>
+<hr />
+<h1>Replication Configuration</h1>
+<h3>mysqldump</h3>
+<div class="highlight"><pre><span class="n">mysql</span><span class="o">&gt;</span> <span class="n">FLUSH</span> <span class="kp">TABLES</span> <span class="k">WITH</span> <span class="k">READ</span> <span class="k">LOCK</span><span class="p">;</span>
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">SHOW</span> <span class="n">MASTER</span> <span class="n">STATUS</span><span class="p">;</span>
+<span class="o">+------------------+----------+--------------+------------------+</span>
+<span class="o">|</span> <span class="n">File</span>             <span class="o">|</span> <span class="n">Position</span> <span class="o">|</span> <span class="n">Binlog_Do_DB</span> <span class="o">|</span> <span class="n">Binlog_Ignore_DB</span> <span class="o">|</span>
+<span class="o">+------------------+----------+--------------+------------------+</span>
+<span class="o">|</span> <span class="n">mysql</span><span class="o">-</span><span class="n">bin</span><span class="p">.</span><span class="mi">000008</span> <span class="o">|</span> <span class="mi">88</span>       <span class="o">|</span> <span class="n">test</span>         <span class="o">|</span> <span class="n">manual</span><span class="p">,</span> <span class="n">mysql</span>    <span class="o">|</span>
+<span class="o">+------------------+----------+--------------+------------------+</span>
+<span class="n">shell</span><span class="o">&gt;</span> <span class="n">mysqldump</span> <span class="o">-</span><span class="n">master</span><span class="o">-</span><span class="n">data</span> <span class="o">-</span><span class="n">uatomd</span> <span class="o">-</span><span class="n">p</span> <span class="n">test</span> <span class="o">&gt;</span> <span class="n">db</span><span class="p">.</span><span class="n">dump</span>
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="k">UNLOCK</span> <span class="kp">TABLES</span><span class="p">;</span>
+</pre></div>
+
+
+<h2>Step 3 Restore the snapshot to slave</h2>
+<div class="highlight"><pre>shell&gt; mysql -uatomd -p -Dtest &lt; db.dump
+</pre></div>
+
+
+<h2>Step 4 Configure and start the slave</h2>
+<div class="highlight"><pre><span class="n">mysql</span><span class="o">&gt;</span> <span class="k">change</span> <span class="n">master</span> <span class="k">to</span> <span class="n">master_host</span><span class="o">=</span><span class="s1">&#39;masterhost&#39;</span><span class="p">,</span>
+<span class="o">-&gt;</span> <span class="n">master_user</span><span class="o">=</span><span class="s1">&#39;repl&#39;</span><span class="p">,</span>
+<span class="o">-&gt;</span> <span class="n">master_password</span><span class="o">=</span><span class="s1">&#39;slavepass&#39;</span><span class="p">,</span>
+<span class="o">-&gt;</span> <span class="n">master_log_file</span><span class="o">=</span><span class="s1">&#39;mysql-bin.000008&#39;</span><span class="p">,</span>
+<span class="o">-&gt;</span> <span class="n">master_log_pos</span><span class="o">=</span><span class="mi">88</span><span class="p">;</span>
+<span class="n">mysql</span><span class="o">&gt;</span> <span class="n">start</span> <span class="n">slave</span><span class="p">;</span>
+</pre></div>
+
+
+<hr />
+<h1>Replication Solutions</h1>
+<hr />
+<h2>Master-Slaves</h2>
+<p><img alt="p-2" src="http://blog.atomd.me/static/images/ha-of-mysql/Master-Slaves.png" /></p>
+<hr />
+<h1>Replication Solutions</h1>
+<h2>Dual-Master</h2>
+<p><img alt="p-3" src="http://blog.atomd.me/static/images/ha-of-mysql/Dual-Master.png" /></p>
+<h2>configuration for preventing key collisions</h2>
+<div class="highlight"><pre><span class="na">auto-increment-increment</span><span class="o">=</span><span class="s">&lt;number&gt;</span>
+<span class="na">auto-increment-offset</span><span class="o">=</span><span class="s">&lt;number&gt;</span>
+</pre></div>
+
+
+<hr />
+<h1>Replication Solutions</h1>
+<h2>Master-Slaves-Slaves</h2>
+<p><img alt="p-4" src="http://blog.atomd.me/static/images/ha-of-mysql/Master-Slaves-Slaves.png" /></p>
+<h2>configuration for chaining replication servers</h2>
+<div class="highlight"><pre><span class="n">log</span><span class="o">-</span><span class="n">slave</span><span class="o">-</span><span class="n">update</span>
+</pre></div>
+
+
+<hr />
+<h1>Replication Solutions</h1>
+<h2>Master-Slaves-Slaves &amp;&amp; Dual-Master</h2>
+<p><img alt="p-5" src="http://blog.atomd.me/static/images/ha-of-mysql/Master-Slaves-Slaves-and-Dual-Master.png" /></p>
+<hr />
+<h1>High Availability Definition</h1>
+<ul>
+<li>Recovery time (a minimum of down-time)</li>
+<li>Data availability (tolerate data loss or not)</li>
+</ul>
+<h2>what heartbeat does</h2>
+<p><img alt="p-6" src="http://blog.atomd.me/static/images/ha-of-mysql/ha_pic.gif" /></p>
+<hr />
+<h1>HA Solutions</h1>
+<hr />
+<h1>MySQL with DRBD</h1>
+<ul>
+<li>Network RAID 1</li>
+<li>Active / Passive (hot vs cold)</li>
+<li>complexity</li>
+</ul>
+<h2>consistency!</h2>
+<p>![<a href="http://blog.atomd.me/static/images/ha-of-mysql/drdb.gif">p-7</a></p>
+<hr />
+<h1>MySQL Cluster NDB</h1>
+<p><strong>MySQL Cluster</strong> is a technology that enables clustering of in-memory databases in a shared-nothing system.</p>
+<h2>components</h2>
+<p><img alt="p-8" src="http://blog.atomd.me/static/images/ha-of-mysql/cluster-components.png" /></p>
+<h2>In MySQL Cluster 7.0</h2>
+<ul>
+<li>4 Node Cluster, 251,000 Transactions/min. 2 Node Cluster, 143,000 Transactions/min</li>
+</ul>
+<hr />
+<h1>Galera Cluster</h1>
+<p><strong>MySQL/Galera</strong> is synchronous multi-master cluster for MySQL/InnoDB database.</p>
+<h2>features</h2>
+<ul>
+<li>Synchronous replication</li>
+<li>Active-active multi-master topology</li>
+<li>Read and write to any cluster node</li>
+<li>Automatic membership control, failed nodes drop from the cluster</li>
+<li>Automatic node joining</li>
+<li>True parallel replication, on row level</li>
+<li>Direct client connections, native MySQL look &amp; feel</li>
+</ul>
+<p><img alt="p-9" src="http://blog.atomd.me/static/images/ha-of-mysql/galera.png" /></p>
+<hr />
+<h1>MySQL Replication</h1>
+<h2>Difficulties</h2>
+<p>Asynchronous or Semisynchronous - Consistency!</p>
+<h2>For example, Master-Slaves-Slaves</h2>
+<p><img alt="p-10" src="http://blog.atomd.me/static/images/ha-of-mysql/mha-problem.png" /></p>
+<hr />
+<h1>MySQL Replication</h1>
+<h2>MHA(MySQL Master HA)</h2>
+<p><img alt="p-11" src="http://blog.atomd.me/static/images/ha-of-mysql/mha_recovery_procedure.png" /></p>
+<h2>others</h2>
+<ul>
+<li>MMM(Multi-Master Replication Manager)</li>
+<li>PRM(Percona Replication Manager)</li>
+</ul>
+<hr />
+<h1>MHA(MySQL Master HA)</h1>
+<p><img alt="p-12" src="http://blog.atomd.me/static/images/ha-of-mysql/components_of_mha.png" /></p>
+<ul>
+<li>SSH public key authentication</li>
+<li>Preserve relay logs and purge regularly</li>
+<li>master_ip_failover_script, shutdown_script, report_script, secondary_check_script</li>
+</ul>
+<hr />
+<h1>MySQL Proxy</h1>
+<p>MySQL Proxy is a simple program that sits between your client and MySQL server(s) that can monitor, analyze or transform their communication.</p>
+<ul>
+<li>load balancing</li>
+<li>failover</li>
+<li>query analysis</li>
+<li>query filtering and modification</li>
+<li>R/W Splitting</li>
+<li>Connection Pool</li>
+<li>...</li>
+</ul>
+<h2>Using Lua Script</h2>
+<ul>
+<li>connect_server, read_handshake</li>
+<li>read_auth, read_auth_result</li>
+<li>read_query, read_query_result</li>
+<li>disconnect_client</li>
+</ul>
+<hr />
+<h1>MySQL Proxy</h1>
+<p><img alt="p-13" src="http://blog.atomd.me/static/images/ha-of-mysql/proxy.png" /></p>
+<hr />
+<h2>FAQ:How much latency does a proxy add to a connection?</h2>
+<p>In the range of 400 microseconds per request.</p>
+<div class="highlight"><pre><span class="n">mysqlslap</span> <span class="o">-</span><span class="n">a</span> <span class="o">-</span><span class="n">c50</span> <span class="o">-</span><span class="n">einnodb</span> <span class="o">--</span><span class="n">number</span><span class="o">-</span><span class="kt">int</span><span class="o">-</span><span class="n">cols</span><span class="o">=</span><span class="mi">4</span> <span class="o">--</span><span class="n">number</span><span class="o">-</span><span class="kt">char</span><span class="o">-</span><span class="n">cols</span><span class="o">=</span><span class="mi">35</span> <span class="o">--</span><span class="n">number</span><span class="o">-</span><span class="n">of</span><span class="o">-</span><span class="n">queries</span><span class="o">=</span><span class="mi">1000</span>
+</pre></div>
+
+
+<h3>proxy -&gt; mysql</h3>
+<p>number of seconds to run all queries: 37 seconds
+4 cores, 4 event-threads, 170%CPU, 0.7%MEM, 175.7 M</p>
+<h3>mysql</h3>
+<p>number of seconds to run all queries: 30 seconds</p>
+<h2>problems</h2>
+<ul>
+<li>lua scripts are difficult to write and debug</li>
+<li>the interface is not so flexible</li>
+<li>performance</li>
+</ul>
+<hr />
+<h1>Vitess</h1>
+<p>It does a lot of optimization on the fly, it rewrites queries and acts as a proxy. Currently it serves every YouTube database request. It's RPC based.</p>
+<h2>Motivation and vision</h2>
+<ul>
+<li>Sessionless connections</li>
+<li>ACID (Atomicity)</li>
+<li>ACID (Consistency)</li>
+<li>Buffer cache vs. row cache</li>
+</ul>
+    </div>
+
+    <div class='post-footer'>
+        <div class='share-footer'>
+            <div id='dated' class="abbr published" title='2013-04-08T19:03:00'>
+                Posted Mon, 08 Apr 13
+            </div>
+
+             
+        </div>
+
+        <div id="article_meta">
+                        Category:
+            <a href="http://blog.atomd.me/category/technology/">technology</a>
+                                    <br />Tags:
+                        <a href="http://blog.atomd.me/tag/mysql/">mysql</a>
+                        <a href="http://blog.atomd.me/tag/ha/">ha</a>
+                                </div>
+
+        
+    </div>
+</article>
+
+<footer>
+    <a href="http://blog.atomd.me/" class="button_accent">&larr;&nbsp;&nbsp;&nbsp;Back to blog</a>
+</footer>
+
+<div id="comments">
+    <h2>Comments</h2>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+    var disqus_identifier = "posts/technology/ha-of-mysql/";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://atomdblog.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+    </script>
+    <noscript>Please enable JavaScript to view <a href="http://disqus.com/?ref_noscript">comments</a>.</noscript>
+</div>
+    </section>
+
+    <script type="text/javascript">
+	var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+	document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+	</script>
+	<script type="text/javascript">
+		try {
+			var pageTracker = _gat._getTracker("UA-35007756-1");
+			pageTracker._trackPageview();
+		} catch(err) {}</script>
+</body>
+</html>

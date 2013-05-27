@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="http://blog.atomd.me/theme/css/style.css"> 
+    <link rel="stylesheet" type="text/css" href="http://blog.atomd.me/theme/css/pygments.css">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:800,400,300|Inconsolata' rel='stylesheet' type='text/css'>
+	<link href="/" type="application/atom+xml" rel="alternate" title="The Other Shore ATOM Feed" />
+	
+			
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type= "text/javascript">
+       MathJax.Hub.Config({
+           config: ["MMLorHTML.js"],
+           jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+           TeX: { extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"], equationNumbers: { autoNumber: "AMS" } },
+           extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+           tex2jax: { 
+               inlineMath: [ ['$','$'] ],
+               displayMath: [ ['$$','$$'] ],
+               processEscapes: true },
+           "HTML-CSS": {
+               styles: { ".MathJax .mo, .MathJax .mi": {color: "black ! important"}}
+           }
+       });
+    </script>
+
+	
+            <title>python在douban的使用 - The Other Shore</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="atomd">
+    </head>
+
+<body>
+    <section id="navbar">
+        <div class="user_meta">
+            <h1 id="user"><a href="http://blog.atomd.me" class="">atomd</a></h1>
+            <h2>Programmer • Writer</h2>
+                        </div>
+        <div class="nav-button">
+            <ul>
+                                                                                                                                        <li><a href="https://github.com/atomd">github</a></li>
+                                                <li><a href="https://bitbucket.org/atomd">bitbucket</a></li>
+                                                <li><a href="http://www.douban.com/people/atomd/">douban</a></li>
+                                 </ul>
+         </div>
+     </section>
+
+     <section id="sidebar">
+        <div class="user_meta">
+            <h1 id="user"><a href="http://blog.atomd.me" class="">atomd</a></h1>
+            <h2>Programmer • Writer</h2>
+            <ul>
+                                                                                                            <li><a href="https://github.com/atomd">github</a></li>
+                                        <li><a href="https://bitbucket.org/atomd">bitbucket</a></li>
+                                        <li><a href="http://www.douban.com/people/atomd/">douban</a></li>
+                            </ul>
+        </div>
+        <footer>
+            <address>
+                Powered by <a href='http://docs.getpelican.com/en/latest/'>Pelican</a>,
+                <a href='https://github.com/jamescooke/pelican-svbtle#readme'>theme info</a>.
+            </address>
+        </footer>
+    </section>
+
+    <section id="posts">
+        <article>
+    <h1 class="title">
+        <a href="http://blog.atomd.me/posts/technology/the-usage-of-python-in-douban/" rel="bookmark">python在douban的使用</a>
+    </h1>
+
+    <div class='article-content'>
+        <hr />
+<p>内容源于洪强宁的一次分享, 以下是其演讲的一些笔记。</p>
+<h3>协同开发环境</h3>
+<ul>
+<li>协同开发环境 mercurial(hg)</li>
+<li>知识和项目管理 trac</li>
+<li>交流沟通 IRC <strong>开源协议（如上线通知机器人）</strong></li>
+</ul>
+<h3>前端</h3>
+<ul>
+<li>模板 Mako</li>
+<li>静态文件处理. 如自动处理静态文件URL和自动js内联</li>
+<li>预编译系统. @import</li>
+<li>引入pyScss.</li>
+</ul>
+<h3>移动端</h3>
+<ul>
+<li>APNS Agent.  <strong>gevent+bottle+APNSWrapper</strong></li>
+</ul>
+<h3>产品开发</h3>
+<ul>
+<li>web框架 Quixote v1.2 只使用了url dispatch部分，<strong>Traversal based，非正则匹配，类似目录层级的线性查找，比route based性能好，易于控制，如在某个层级统一对请求拦截、查找</strong></li>
+<li>大量使用语言特性. 如decorator，generator（<strong>这里举了个feed合并的例子，见<a href="http://slidesha.re/tVis">Python于Web 2.0网站的应用</a> page102</strong>), meta(黑魔法)</li>
+<li>OneRing 开源，web技术做桌面应用</li>
+</ul>
+<h3>技术支持</h3>
+<ul>
+<li>Restful MongoDB Service.   django-piston+sleepy</li>
+</ul>
+<h3>QA</h3>
+<ul>
+<li>pylint 在代码提交后做静态检查，自制插件SQL inject漏洞检查，XSS漏洞检查等</li>
+<li>onimaru 错误收集系统，统计及展示，基于 django-sentry实现</li>
+<li>release manager 自动打tag，确认测试结果，发送email及irc－bot通知，django实现</li>
+</ul>
+<h3>算法</h3>
+<p>关注性能</p>
+<ul>
+<li>cmy Mysql Client, C API＋python wrapper,只支持select,返回iterator,比MySQLdb在大数据量时性能高一个数量级</li>
+<li>C++ Intergration，C++实现算法（boost python）,python加载和初始化数据来保证灵活</li>
+</ul>
+<h3>平台</h3>
+<p>关注性能</p>
+<ul>
+<li>Online Profiler 性能分析工具，举例提到的是页面渲染的分析工具，包括函数执行时间，SQL数量及时间，memcached访问和时间等，利用了python hotshot模块</li>
+<li>DoubanService thrift RPC, PasteScript实现代码生成和提供服务，客户端负责负责均衡和failover（将<a href="https://github.com/twitter/thrift_client">thrift_client</a>移植到python）,nagios和munin集成监控</li>
+<li>Dpark 分布式计算框架，将Spark移植到python，基于mesos实现资源调度</li>
+<li>pypcap + dpkt 对mysql抓包，进行分析检查，对slave热备（<strong>这里提到了在他们是一主加一个热备，在现在的数据规模下，slave需要几十分钟才能达到正常水平，这是不是说明虽然不依赖mysql的缓存，但这个缓存也有些作用</strong>）</li>
+<li>DAE Google AppEngine, 内部使用. 提到的技术有virtualenv、gunicorn、gevent。</li>
+</ul>
+<p>除了python，还使用C\C++, <strong>go</strong>, <strong>R</strong>, obj-c, java, c#</p>
+<p>PS：这次pyCon的多个议题都提到了coroutine, 或许引入协程会是python web开发的未来。</p>
+    </div>
+
+    <div class='post-footer'>
+        <div class='share-footer'>
+            <div id='dated' class="abbr published" title='2013-04-20T21:03:00'>
+                Posted Sat, 20 Apr 13
+            </div>
+
+             
+        </div>
+
+        <div id="article_meta">
+                        Category:
+            <a href="http://blog.atomd.me/category/technology/">technology</a>
+                                    <br />Tags:
+                        <a href="http://blog.atomd.me/tag/python/">python</a>
+                                </div>
+
+        
+    </div>
+</article>
+
+<footer>
+    <a href="http://blog.atomd.me/" class="button_accent">&larr;&nbsp;&nbsp;&nbsp;Back to blog</a>
+</footer>
+
+<div id="comments">
+    <h2>Comments</h2>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+    var disqus_identifier = "posts/technology/the-usage-of-python-in-douban/";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://atomdblog.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+    </script>
+    <noscript>Please enable JavaScript to view <a href="http://disqus.com/?ref_noscript">comments</a>.</noscript>
+</div>
+    </section>
+
+    <script type="text/javascript">
+	var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+	document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+	</script>
+	<script type="text/javascript">
+		try {
+			var pageTracker = _gat._getTracker("UA-35007756-1");
+			pageTracker._trackPageview();
+		} catch(err) {}</script>
+</body>
+</html>

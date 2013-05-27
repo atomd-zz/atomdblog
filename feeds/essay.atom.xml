@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom"><title>The Other Shore</title><link href="http://blog.atomd.me/" rel="alternate"></link><link href="/feeds/essay.atom.xml" rel="self"></link><id>http://blog.atomd.me/</id><updated>2012-10-24T19:03:00+08:00</updated><entry><title>hello, world</title><link href="http://blog.atomd.me/posts/essay/hello-world/" rel="alternate"></link><updated>2012-10-24T19:03:00+08:00</updated><author><name>atomd</name></author><id>tag:blog.atomd.me,2012-10-24:posts/essay/hello-world/</id><summary type="html">&lt;p&gt;又开了博客。&lt;/p&gt;
+&lt;p&gt;消费多年，自己有能力开始产出。这是个技术为主的博客，来记录学习的过程。当然也会记录我的生活和想法。&lt;/p&gt;
+&lt;p&gt;博客托管在Github上，主要的原因在于：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;文章需要版本管理，而且需要备份管理。Github的pages天然有这个优势。&lt;/li&gt;
+&lt;li&gt;支持Markdown等的标记语言，无关格式和样式，可以方便转到其他格式。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;希望自己玩得开心！&lt;/p&gt;</summary><category term="life"></category></entry></feed>

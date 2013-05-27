@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="http://blog.atomd.me/theme/css/style.css"> 
+    <link rel="stylesheet" type="text/css" href="http://blog.atomd.me/theme/css/pygments.css">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:800,400,300|Inconsolata' rel='stylesheet' type='text/css'>
+	<link href="/" type="application/atom+xml" rel="alternate" title="The Other Shore ATOM Feed" />
+	
+	
+            <title>The Other Shore</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="atomd">
+    </head>
+
+<body>
+    <section id="navbar">
+        <div class="user_meta">
+            <h1 id="user"><a href="http://blog.atomd.me" class="">atomd</a></h1>
+            <h2>Programmer • Writer</h2>
+                        </div>
+        <div class="nav-button">
+            <ul>
+                                                                                                                                        <li><a href="https://github.com/atomd">github</a></li>
+                                                <li><a href="https://bitbucket.org/atomd">bitbucket</a></li>
+                                                <li><a href="http://www.douban.com/people/atomd/">douban</a></li>
+                                 </ul>
+         </div>
+     </section>
+
+     <section id="sidebar">
+        <div class="user_meta">
+            <h1 id="user"><a href="http://blog.atomd.me" class="">atomd</a></h1>
+            <h2>Programmer • Writer</h2>
+            <ul>
+                                                                                                            <li><a href="https://github.com/atomd">github</a></li>
+                                        <li><a href="https://bitbucket.org/atomd">bitbucket</a></li>
+                                        <li><a href="http://www.douban.com/people/atomd/">douban</a></li>
+                            </ul>
+        </div>
+        <footer>
+            <address>
+                Powered by <a href='http://docs.getpelican.com/en/latest/'>Pelican</a>,
+                <a href='https://github.com/jamescooke/pelican-svbtle#readme'>theme info</a>.
+            </address>
+        </footer>
+    </section>
+
+    <section id="posts">
+        	
+            <article class='listed'>
+            <h1 class="title">
+                <a href="http://blog.atomd.me/posts/technology/network-configuration-notes/" rel='bookmark'>网络配置小记</a>
+            </h1>
+            <div class="article-content"> <h3>网桥基本配置</h3>
+<p>在eth0上开启promisc混杂模式，建立网桥br-100后设置ip，并将eth0桥接到br-100上。</p>
+<p>配置如下，其中一些参数的含义详见: <a href="http://linux.die.net/man/8/brctl">http://linux.die.net/man/8/brctl</a>。</p>
+<div class="highlight"><pre>auto eth0
+iface eth0 inet manual
+    up ifconfig $IFACE 0.0.0.0 up
+    up ip link set $IFACE promisc on
+    down ip link set $IFACE promisc ...</pre></div> </div>
+            <div class="abbr published">
+                Posted  <a href='http://blog.atomd.me/posts/technology/network-configuration-notes/' title='2012-11-19T19:03:00'>Mon, 19 Nov 12</a> in <a href="http://blog.atomd.me/category/technology/">technology</a>.              
+            </div>
+        </article>
+            <article class='listed'>
+            <h1 class="title">
+                <a href="http://blog.atomd.me/posts/technology/the-basic-of-scalable-cache-coherence/" rel='bookmark'>高速缓存一致性的相关笔记和演讲稿</a>
+            </h1>
+            <div class="article-content"> <p>我在计算机并行体系结构的课程上对高速缓存一致性进行了介绍。准备过程中我阅读了老师推荐的论文和书籍，也在互联网上查阅很多资料。</p>
+<p>我准备的内容基本涵盖了缓存一致性的大部分基础知识，包括基于监听和基于目录式的缓存一致性协议的概念及权衡因素，并介绍了斯坦福的DASH协议和基于目录的协议内存占用过大的优化方案，最后还探讨了伪共享和空间局部性对性能影响。</p>
+<p>这些偏底层的技术还是让我花了不少时间，应该庆幸自己不是基于硬件来做设计和开发。立竿见影的收获是提供了机器的视角给我，对于以前不太理解的多线程技巧也似乎找到了一些感觉。并外《并行计算机体系结构——硬件/软件结合的设计和分析》这本书内容很好，论述也清晰，神奇的是1998年出版的书到现在也没有过时。</p>
+<p>下面就是我做的演示文稿:)</p>
+<hr />
+<h2>The Role of Cache</h2>
+<ol>
+<li>Reducing the average memory access time</li>
+<li>Reducing the bandwidth requirement</li>
+</ol>
+<p><img alt="figure-1" src="http://blog.atomd.me/static/images/scalable-cache-coherence/common-memory-hierarchies-found-in-multiprocessors.png" /></p>
+<p>从存储器层次上看，程序员对存储器容量和速度的期望是无限的，但是和存储器的成本相矛盾。每一层都要从一个较大的存储器空间中把地址映射到一个较小的但是更快上层容器。而高速缓存就是介于CPU、寄存器与主存之间的一层。</p>
+<p>而高速缓存总是扮演着重要角色 ...</p> </div>
+            <div class="abbr published">
+                Posted  <a href='http://blog.atomd.me/posts/technology/the-basic-of-scalable-cache-coherence/' title='2012-10-28T19:03:00'>Sun, 28 Oct 12</a> in <a href="http://blog.atomd.me/category/technology/">technology</a>.              
+            </div>
+        </article>
+            <article class='listed'>
+            <h1 class="title">
+                <a href="http://blog.atomd.me/posts/essay/hello-world/" rel='bookmark'>hello, world</a>
+            </h1>
+            <div class="article-content"> <p>又开了博客。</p>
+<p>消费多年，自己有能力开始产出。这是个技术为主的博客，来记录学习的过程。当然也会记录我的生活和想法。</p>
+<p>博客托管在Github上，主要的原因在于：</p>
+<ul>
+<li>文章需要版本管理，而且需要备份管理。Github的pages天然有这个优势。</li>
+<li>支持Markdown等的标记语言，无关格式和样式，可以方便转到其他格式。</li>
+</ul>
+<p>希望自己玩得开心！</p> </div>
+            <div class="abbr published">
+                Posted  <a href='http://blog.atomd.me/posts/essay/hello-world/' title='2012-10-24T19:03:00'>Wed, 24 Oct 12</a> in <a href="http://blog.atomd.me/category/essay/">essay</a>.              
+            </div>
+        </article>
+        <p class="paginator">
+	                                    		        <a href="http://blog.atomd.me/index2.html" class="button_accent">&larr;&nbsp;&nbsp;&nbsp;newer</a>
+		                     
+		</p>
+    </section>
+
+    <script type="text/javascript">
+	var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+	document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+	</script>
+	<script type="text/javascript">
+		try {
+			var pageTracker = _gat._getTracker("UA-35007756-1");
+			pageTracker._trackPageview();
+		} catch(err) {}</script>
+</body>
+</html>

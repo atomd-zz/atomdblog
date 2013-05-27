@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="http://blog.atomd.me/theme/css/style.css"> 
+    <link rel="stylesheet" type="text/css" href="http://blog.atomd.me/theme/css/pygments.css">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:800,400,300|Inconsolata' rel='stylesheet' type='text/css'>
+	<link href="/" type="application/atom+xml" rel="alternate" title="The Other Shore ATOM Feed" />
+	
+			
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type= "text/javascript">
+       MathJax.Hub.Config({
+           config: ["MMLorHTML.js"],
+           jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+           TeX: { extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"], equationNumbers: { autoNumber: "AMS" } },
+           extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+           tex2jax: { 
+               inlineMath: [ ['$','$'] ],
+               displayMath: [ ['$$','$$'] ],
+               processEscapes: true },
+           "HTML-CSS": {
+               styles: { ".MathJax .mo, .MathJax .mi": {color: "black ! important"}}
+           }
+       });
+    </script>
+
+	
+            <title>关于错误处理的方式 - The Other Shore</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="atomd">
+    </head>
+
+<body>
+    <section id="navbar">
+        <div class="user_meta">
+            <h1 id="user"><a href="http://blog.atomd.me" class="">atomd</a></h1>
+            <h2>Programmer • Writer</h2>
+                        </div>
+        <div class="nav-button">
+            <ul>
+                                                                                                                                        <li><a href="https://github.com/atomd">github</a></li>
+                                                <li><a href="https://bitbucket.org/atomd">bitbucket</a></li>
+                                                <li><a href="http://www.douban.com/people/atomd/">douban</a></li>
+                                 </ul>
+         </div>
+     </section>
+
+     <section id="sidebar">
+        <div class="user_meta">
+            <h1 id="user"><a href="http://blog.atomd.me" class="">atomd</a></h1>
+            <h2>Programmer • Writer</h2>
+            <ul>
+                                                                                                            <li><a href="https://github.com/atomd">github</a></li>
+                                        <li><a href="https://bitbucket.org/atomd">bitbucket</a></li>
+                                        <li><a href="http://www.douban.com/people/atomd/">douban</a></li>
+                            </ul>
+        </div>
+        <footer>
+            <address>
+                Powered by <a href='http://docs.getpelican.com/en/latest/'>Pelican</a>,
+                <a href='https://github.com/jamescooke/pelican-svbtle#readme'>theme info</a>.
+            </address>
+        </footer>
+    </section>
+
+    <section id="posts">
+        <article>
+    <h1 class="title">
+        <a href="http://blog.atomd.me/posts/technology/exception-notes/" rel="bookmark">关于错误处理的方式</a>
+    </h1>
+
+    <div class='article-content'>
+        <p>以下摘自《代码大全2》第8章防御式编程8.4异常。</p>
+<h2>异常：</h2>
+<p>异常和继承有一点是相同的，即：审慎明智地使用，可以<strong>降低复杂度</strong>；而草率粗心使用时，只会让<strong>代码变地难以理解</strong>。</p>
+<h5>用异常通知程序地其它部分，发生了不可忽视的错误。</h5>
+<p>提供了一种无法被忽略的错误通知机制。</p>
+<h5>只在真正例外的情况下才抛出异常</h5>
+<p>再其它编码实践方法无法解决的情况下才使用异常，处理不仅罕见甚至永远不会发生的情况。
+一方面提供了处理意料之外的情况的强有力的方法，但同时弱化了封装、增加了复杂性，调用方需要了解代码可能抛出的异常。</p>
+<h4>不能用异常来推卸责任</h4>
+<p>可以在局部处理的错误就应该在局部处理。</p>
+<h4>避免在构造和析构函数抛出异常，除非在同一地方捕获。</h4>
+<p>主要针对c++吧</p>
+<h4>在恰当的抽象层次抛出异常</h4>
+<p>如果决定把一个异常传给调用方，确保异常的抽象层次与接口的抽象层次是一致的。也就不能把底层异常抛出。</p>
+<h4>在异常中加入关于导致异常发生的全部信息</h4>
+<p>主要针对c++</p>
+<h4>考虑创建一个集中的异常报告机制</h4>
+<p>把错误集中在一个全局的错误处理子程序或对象</p>
+<h4>把项目对异常的使用标准化</h4>
+<ul>
+<li>为可以抛出哪些种类的异常建立标砖。</li>
+<li>考虑建立项目的特定异常类，可以作为项目中抛出异常的基类。</li>
+<li>规定在何种场合允许代码使用throw－catch语句在局部对错误进行处理。</li>
+<li>规定在何种场合允许代码抛出不在局部对错误进行处理的异常。</li>
+<li>确定是否使用集中的的异常报考机制。</li>
+<li>是否在构造和析构函数中使用异常。</li>
+</ul>
+<h4>考虑异常的替换方案</h4>
+<p>仅仅因为编程语言提供了异常处理机制而使用异常，是典型的“为了使用而使用”。在处理错误时，应该自始至终考虑各种错误处理机制：在局部处理错误，使用错误码来传递错误等。<strong>最后请你考虑你的程序是否真的需要异常。</strong></p>
+<hr />
+<p>之前摘录这部分是源于讨论出错后使用异常，还是使用返回错误码的形式。其实焦点是围绕模块接口的错误反馈和局部的错误处理两种情况。有时两种情况很混淆，我是觉得使用异常来对局部进行错误处理是个很好的选择，但不宜抛出层次过深。</p>
+<p>还有一种情况就是会过度使用异常，表现在使用异常来控制程序逻辑，其实这是不需要的，完全可以通过简单的判断来实现，异常反而会增加复杂度。</p>
+    </div>
+
+    <div class='post-footer'>
+        <div class='share-footer'>
+            <div id='dated' class="abbr published" title='2013-04-08T12:34:00'>
+                Posted Mon, 08 Apr 13
+            </div>
+
+             
+        </div>
+
+        <div id="article_meta">
+                        Category:
+            <a href="http://blog.atomd.me/category/technology/">technology</a>
+                                    <br />Tags:
+                        <a href="http://blog.atomd.me/tag/exception/">exception</a>
+                        <a href="http://blog.atomd.me/tag/notes/">notes</a>
+                                </div>
+
+        
+    </div>
+</article>
+
+<footer>
+    <a href="http://blog.atomd.me/" class="button_accent">&larr;&nbsp;&nbsp;&nbsp;Back to blog</a>
+</footer>
+
+<div id="comments">
+    <h2>Comments</h2>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+    var disqus_identifier = "posts/technology/exception-notes/";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://atomdblog.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+    </script>
+    <noscript>Please enable JavaScript to view <a href="http://disqus.com/?ref_noscript">comments</a>.</noscript>
+</div>
+    </section>
+
+    <script type="text/javascript">
+	var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+	document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+	</script>
+	<script type="text/javascript">
+		try {
+			var pageTracker = _gat._getTracker("UA-35007756-1");
+			pageTracker._trackPageview();
+		} catch(err) {}</script>
+</body>
+</html>

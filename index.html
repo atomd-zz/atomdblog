@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="http://blog.atomd.me/theme/css/style.css"> 
+    <link rel="stylesheet" type="text/css" href="http://blog.atomd.me/theme/css/pygments.css">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:800,400,300|Inconsolata' rel='stylesheet' type='text/css'>
+	<link href="/" type="application/atom+xml" rel="alternate" title="The Other Shore ATOM Feed" />
+	
+	
+            <title>The Other Shore</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="atomd">
+    </head>
+
+<body>
+    <section id="navbar">
+        <div class="user_meta">
+            <h1 id="user"><a href="http://blog.atomd.me" class="">atomd</a></h1>
+            <h2>Programmer • Writer</h2>
+                        </div>
+        <div class="nav-button">
+            <ul>
+                                                                                                                                        <li><a href="https://github.com/atomd">github</a></li>
+                                                <li><a href="https://bitbucket.org/atomd">bitbucket</a></li>
+                                                <li><a href="http://www.douban.com/people/atomd/">douban</a></li>
+                                 </ul>
+         </div>
+     </section>
+
+     <section id="sidebar">
+        <div class="user_meta">
+            <h1 id="user"><a href="http://blog.atomd.me" class="">atomd</a></h1>
+            <h2>Programmer • Writer</h2>
+            <ul>
+                                                                                                            <li><a href="https://github.com/atomd">github</a></li>
+                                        <li><a href="https://bitbucket.org/atomd">bitbucket</a></li>
+                                        <li><a href="http://www.douban.com/people/atomd/">douban</a></li>
+                            </ul>
+        </div>
+        <footer>
+            <address>
+                Powered by <a href='http://docs.getpelican.com/en/latest/'>Pelican</a>,
+                <a href='https://github.com/jamescooke/pelican-svbtle#readme'>theme info</a>.
+            </address>
+        </footer>
+    </section>
+
+    <section id="posts">
+        	
+            <article class='listed'>
+            <h1 class="title">
+                <a href="http://blog.atomd.me/posts/technology/a-milestone/" rel='bookmark'>在Linode上部署python web项目</a>
+            </h1>
+            <div class="article-content"> <h2>Linode Statistics</h2>
+<p><img alt="figure-1" src="http://blog.atomd.me/static/images/a-milestone/linode2.png" /></p>
+<h2>Google Realtime Analysis</h2>
+<p><img alt="figure-2" src="http://blog.atomd.me/static/images/a-milestone/top_realtime.png" /></p>
+<p>我们之前开玩笑说，不会连本科娱乐的作品也超越不了吧。这周归档文件时，我就把相关记录翻出来了。虽然东西API都很简单，但是从流量和并发来看，我在单实例的Linode512上完成的还是不错的。</p> </div>
+            <div class="abbr published">
+                Posted  <a href='http://blog.atomd.me/posts/technology/a-milestone/' title='2013-05-02T20:23:00'>Thu, 02 May 13</a> in <a href="http://blog.atomd.me/category/technology/">technology</a>.              
+            </div>
+        </article>
+            <article class='listed'>
+            <h1 class="title">
+                <a href="http://blog.atomd.me/posts/technology/the-usage-of-python-in-douban/" rel='bookmark'>python在douban的使用</a>
+            </h1>
+            <div class="article-content"> <hr />
+<p>内容源于洪强宁的一次分享, 以下是其演讲的一些笔记。</p>
+<h3>协同开发环境</h3>
+<ul>
+<li>协同开发环境 mercurial(hg)</li>
+<li>知识和项目管理 trac</li>
+<li>交流沟通 IRC <strong>开源协议（如上线通知机器人）</strong></li>
+</ul>
+<h3>前端</h3>
+<ul>
+<li>模板 Mako</li>
+<li>静态文件处理. 如自动处理静态文件URL和自动js内联</li>
+<li>预编译系统. @import</li>
+<li>引入pyScss.</li>
+</ul>
+<h3>移动端</h3>
+<ul>
+<li>APNS Agent.  <strong>gevent+bottle+APNSWrapper</strong></li>
+</ul>
+<h3>产品开发</h3>
+<ul>
+<li>web框架 Quixote v1.2 只使用了url dispatch部分，<strong>Traversal based，非正则匹配，类似目录层级的线性查找，比route based性能好，易于控制 ...</strong></li></ul> </div>
+            <div class="abbr published">
+                Posted  <a href='http://blog.atomd.me/posts/technology/the-usage-of-python-in-douban/' title='2013-04-20T21:03:00'>Sat, 20 Apr 13</a> in <a href="http://blog.atomd.me/category/technology/">technology</a>.              
+            </div>
+        </article>
+            <article class='listed'>
+            <h1 class="title">
+                <a href="http://blog.atomd.me/posts/technology/the-usage-of-mha/" rel='bookmark'>MHA 的使用方式</a>
+            </h1>
+            <div class="article-content"> <h2>安装</h2>
+<p>MHA由Node和Manager模块组成，Node运行在每一台MySQL服务器上。</p>
+<h3>安装 MHA Node</h3>
+<p><a href="https://github.com/yoshinorim/mha4mysql-node">https://github.com/yoshinorim/mha4mysql-node</a></p>
+<p><strong>所以相关服务器都需要部署Node模块</strong></p>
+<h4>依赖</h4>
+<ul>
+<li>DBD::mysql</li>
+</ul>
+<h4>Ubuntu/Debian</h4>
+<div class="highlight"><pre><span class="c">## If you have not installed DBD::mysql, install it like below, or install from source.</span>
+<span class="nv">$ </span>apt-get install libdbd-mysql-perl
+
+<span class="c">## Get MHA Node deb package ...</span></pre></div> </div>
+            <div class="abbr published">
+                Posted  <a href='http://blog.atomd.me/posts/technology/the-usage-of-mha/' title='2013-04-11T20:03:00'>Thu, 11 Apr 13</a> in <a href="http://blog.atomd.me/category/technology/">technology</a>.              
+            </div>
+        </article>
+            <article class='listed'>
+            <h1 class="title">
+                <a href="http://blog.atomd.me/posts/technology/ha-of-mysql/" rel='bookmark'>MySQL的复制与高可用性</a>
+            </h1>
+            <div class="article-content"> <p><strong>MySQL Replication and high Availability</strong></p>
+<hr />
+<h1>Replicaiton Implementation</h1>
+<h2>Three thread</h2>
+<ul>
+<li>Binlog dump thread</li>
+<li>Slave I/O thread</li>
+<li>Slave SQL thread</li>
+</ul>
+<h3>How MySQL replicaiton works</h3>
+<p><img alt="p-1" src="http://blog.atomd.me/static/images/ha-of-mysql/Replicaiton.png" /></p>
+<h2>Two ways</h2>
+<ul>
+<li>asynchronous</li>
+<li>semi-synchronous(5.5+)</li>
+</ul>
+<hr />
+<h2>Maatkit</h2>
+<ul>
+<li>mk-table-checksum : Perform an online replication consistency check, or checksum MySQL ...</li></ul> </div>
+            <div class="abbr published">
+                Posted  <a href='http://blog.atomd.me/posts/technology/ha-of-mysql/' title='2013-04-08T19:03:00'>Mon, 08 Apr 13</a> in <a href="http://blog.atomd.me/category/technology/">technology</a>.              
+            </div>
+        </article>
+            <article class='listed'>
+            <h1 class="title">
+                <a href="http://blog.atomd.me/posts/technology/exception-notes/" rel='bookmark'>关于错误处理的方式</a>
+            </h1>
+            <div class="article-content"> <p>以下摘自《代码大全2》第8章防御式编程8.4异常。</p>
+<h2>异常：</h2>
+<p>异常和继承有一点是相同的，即：审慎明智地使用，可以<strong>降低复杂度</strong>；而草率粗心使用时，只会让<strong>代码变地难以理解</strong>。</p>
+<h5>用异常通知程序地其它部分，发生了不可忽视的错误。</h5>
+<p>提供了一种无法被忽略的错误通知机制。</p>
+<h5>只在真正例外的情况下才抛出异常</h5>
+<p>再其它编码实践方法无法解决的情况下才使用异常，处理不仅罕见甚至永远不会发生的情况。
+一方面提供了处理意料之外的情况的强有力的方法，但同时弱化了封装、增加了复杂性，调用方需要了解代码可能抛出的异常。</p>
+<h4>不能用异常来推卸责任</h4>
+<p>可以在局部处理的错误就应该在局部处理。</p>
+<h4>避免在构造和析构函数抛出异常，除非在同一地方捕获。</h4>
+<p>主要针对c++吧</p>
+<h4>在恰当的抽象层次抛出异常</h4>
+<p>如果决定把一个异常传给调用方，确保异常的抽象层次与接口的抽象层次是一致的。也就不能把底层异常抛出。</p>
+<h4>在异常中加入关于导致异常发生的全部信息</h4>
+<p>主要针对c++</p>
+<h4>考虑创建一个集中的异常报告机制</h4>
+<p>把错误集中在一个全局的错误处理子程序或对象</p>
+<h4>把项目对异常的使用标准化</h4>
+<ul>
+<li>为可以抛出哪些种类的异常建立标砖。</li>
+<li>考虑建立项目的特定异常类 ...</li></ul> </div>
+            <div class="abbr published">
+                Posted  <a href='http://blog.atomd.me/posts/technology/exception-notes/' title='2013-04-08T12:34:00'>Mon, 08 Apr 13</a> in <a href="http://blog.atomd.me/category/technology/">technology</a>.              
+            </div>
+        </article>
+        <p class="paginator">
+		                                    <a href="http://blog.atomd.me/index2.html" class="button_accent" style="position: absolute; right: 0;">continue&nbsp;&nbsp;&nbsp;&rarr;</a>
+                	</p>
+    </section>
+
+    <script type="text/javascript">
+	var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+	document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+	</script>
+	<script type="text/javascript">
+		try {
+			var pageTracker = _gat._getTracker("UA-35007756-1");
+			pageTracker._trackPageview();
+		} catch(err) {}</script>
+</body>
+</html>

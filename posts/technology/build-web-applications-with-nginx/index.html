@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="http://blog.atomd.me/theme/css/style.css"> 
+    <link rel="stylesheet" type="text/css" href="http://blog.atomd.me/theme/css/pygments.css">
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:800,400,300|Inconsolata' rel='stylesheet' type='text/css'>
+	<link href="/" type="application/atom+xml" rel="alternate" title="The Other Shore ATOM Feed" />
+	
+			
+    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type= "text/javascript">
+       MathJax.Hub.Config({
+           config: ["MMLorHTML.js"],
+           jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
+           TeX: { extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"], equationNumbers: { autoNumber: "AMS" } },
+           extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
+           tex2jax: { 
+               inlineMath: [ ['$','$'] ],
+               displayMath: [ ['$$','$$'] ],
+               processEscapes: true },
+           "HTML-CSS": {
+               styles: { ".MathJax .mo, .MathJax .mi": {color: "black ! important"}}
+           }
+       });
+    </script>
+
+	
+            <title>使用Nginx构建Web应用程序 - The Other Shore</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="atomd">
+    </head>
+
+<body>
+    <section id="navbar">
+        <div class="user_meta">
+            <h1 id="user"><a href="http://blog.atomd.me" class="">atomd</a></h1>
+            <h2>Programmer • Writer</h2>
+                        </div>
+        <div class="nav-button">
+            <ul>
+                                                                                                                                        <li><a href="https://github.com/atomd">github</a></li>
+                                                <li><a href="https://bitbucket.org/atomd">bitbucket</a></li>
+                                                <li><a href="http://www.douban.com/people/atomd/">douban</a></li>
+                                 </ul>
+         </div>
+     </section>
+
+     <section id="sidebar">
+        <div class="user_meta">
+            <h1 id="user"><a href="http://blog.atomd.me" class="">atomd</a></h1>
+            <h2>Programmer • Writer</h2>
+            <ul>
+                                                                                                            <li><a href="https://github.com/atomd">github</a></li>
+                                        <li><a href="https://bitbucket.org/atomd">bitbucket</a></li>
+                                        <li><a href="http://www.douban.com/people/atomd/">douban</a></li>
+                            </ul>
+        </div>
+        <footer>
+            <address>
+                Powered by <a href='http://docs.getpelican.com/en/latest/'>Pelican</a>,
+                <a href='https://github.com/jamescooke/pelican-svbtle#readme'>theme info</a>.
+            </address>
+        </footer>
+    </section>
+
+    <section id="posts">
+        <article>
+    <h1 class="title">
+        <a href="http://blog.atomd.me/posts/technology/build-web-applications-with-nginx/" rel="bookmark">使用Nginx构建Web应用程序</a>
+    </h1>
+
+    <div class='article-content'>
+        <p><em>This is originated from a share of the internal. Almost all the work is based on Openresty of agentzh, and some of the examples are retrieved from the wiki directly.</em></p>
+<h1>Build Web applications with Nginx</h1>
+<ul>
+<li>high-performance</li>
+<li>small memory footprint</li>
+</ul>
+<p><strong>apache</strong> threaded or process-oriented model.
+<strong>nginx</strong> asynchronous event-driven model (I/O multiplexing)
+nginx is a web application framework.</p>
+<p>Note:</p>
+<p>Apache server utilizes "embedded interpreter" approach. Dynamic content is typically handed off to CGI, FastCGI. And Nginx's ability to efficiently serve static content and deal with high concurrency.</p>
+<p>And how to use Nginx to handle dynamic content and to build a web app?
+<em>web server / proxy server / mail proxy server</em></p>
+<hr />
+<h2>The Basics of Nginx</h2>
+<h3>Basic configuration : <em>nginx.conf</em></h3>
+<div class="highlight"><pre><span class="c1">#nginx.conf</span>
+<span class="k">worker_processes</span> <span class="mi">4</span><span class="p">;</span>
+<span class="k">events</span> <span class="p">{</span>
+    <span class="kn">worker_connections</span> <span class="mi">1024</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">http</span> <span class="p">{</span>
+    <span class="kn">upstream</span> <span class="s">tornado</span><span class="p">{</span>
+        <span class="kn">server</span> <span class="n">localhost</span><span class="p">:</span><span class="mi">9876</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kn">...</span>
+    <span class="s">server</span> <span class="p">{</span>
+    <span class="kn">listen</span> <span class="mi">80</span><span class="p">;</span>
+    <span class="kn">server_name</span> <span class="s">www.zhihu.com</span><span class="p">;</span>
+    <span class="kn">...</span>
+    <span class="s">location</span> <span class="s">/</span> <span class="p">{</span>
+         <span class="kn">proxy_pass</span> <span class="s">http://tornado</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>Note:
+3 hierarchies:http -&gt; server -&gt; location</p>
+<hr />
+<h3>HTTP request processing phases</h3>
+<p>The directives are not executed by sequential order</p>
+<ul>
+<li>NGX_HTTP_SERVER_REWRITE_PHASE</li>
+<li>NGX_HTTP_FIND_CONFIG_PHASE(no handler)</li>
+<li><strong>NGX_HTTP_REWRITE_PHASE</strong></li>
+<li>NGX_HTTP_POST_REWRITE_PHASE(no handler)</li>
+<li>NGX_HTTP_PREACCESS_PHASE</li>
+<li><strong>NGX_HTTP_ACCESS_PHASE</strong></li>
+<li>NGX_HTTP_POST_ACCESS_PHASE(no handler)</li>
+<li>NGX_HTTP_TRY_FILES_PHASE(no handler)</li>
+<li><strong>NGX_HTTP_CONTENT_PHASE</strong>(only one handler can take effect)</li>
+<li>NGX_HTTP_LOG_PHASE</li>
+</ul>
+<p>Note:</p>
+<ul>
+<li>the phase of request URI transformation on virtual server level;</li>
+<li>the phase of configuration location lookup;</li>
+<li>the phase of request URI transformation on location level;</li>
+<li>request URI transformation post-processing phase;</li>
+<li>access restrictions check preprocessing phase;</li>
+<li>access restrictions check phase;</li>
+<li>access restrictions check post-processing phase;</li>
+<li>try_files directive processing phase;</li>
+<li>content generation phase;</li>
+<li>logging phase.</li>
+</ul>
+<hr />
+<h3>variable</h3>
+<h4>built-in variables <a href="http://wiki.nginx.org/HttpCoreModulehttp://wiki.nginx.org/HttpCoreModule">http://wiki.nginx.org/HttpCoreModule</a></h4>
+<div class="highlight"><pre><span class="k">$content_type</span>
+<span class="nv">$args</span>
+<span class="nv">$request_method</span>
+<span class="nv">$arg_PARAMETER</span>
+<span class="nv">$http_HEADER</span>
+<span class="nv">$sent_http_HEADER</span>
+<span class="nv">$cookie_COOKIE</span>
+</pre></div>
+
+
+<h4>self-built variables</h4>
+<div class="highlight"><pre><span class="k">set</span> <span class="nv">$tmp</span> <span class="nv">$host</span><span class="p">;</span>
+<span class="k">set</span> <span class="nv">$hi</span> <span class="s">hi</span><span class="p">;</span>
+<span class="k">set</span> <span class="nv">$greeting</span> <span class="s">&quot;</span><span class="nv">$hi,</span> <span class="nv">$cookie_user&quot;</span><span class="p">;</span>
+<span class="k">set</span> <span class="nv">$hill</span> <span class="s">&quot;</span><span class="nv">${hi}ll&quot;</span>
+</pre></div>
+
+
+<h4>exmaple</h4>
+<div class="highlight"><pre><span class="k">if</span> <span class="s">(</span><span class="nv">$http_user_agent</span> <span class="p">~</span> <span class="sr">MSIE)</span> <span class="p">{</span>
+    <span class="kn">rewrite</span>  <span class="s">^(.*)</span>$  <span class="s">/msie/</span><span class="nv">$1</span>  <span class="s">break</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">rewrite</span>  <span class="s">^/users/(.*)</span>$  <span class="s">/show?user=</span><span class="nv">$1?</span>  <span class="s">last</span><span class="p">;</span>
+
+<span class="k">if</span> <span class="s">(</span><span class="nv">$request_method</span> <span class="p">=</span> <span class="s">POST</span> <span class="s">)</span> <span class="p">{</span>
+    <span class="kn">return</span> <span class="mi">405</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<p>The Nginx configure file notation is a small language.</p>
+<p><a href="http://wiki.nginx.org/IfIsEvil">If Is Evil - http://wiki.nginx.org/IfIsEvil</a></p>
+<hr />
+<h3>subrequest</h3>
+<ul>
+<li>modules can perform multiple subrequests and combine the outputs into a single response</li>
+<li>subrequests can perform their own sub-subrequests, and sub-subrequests can initiate sub-sub-subrequests…</li>
+<li>parallel subrequests</li>
+</ul>
+<p>Note:</p>
+<p>With subrequests, you can return the results of a different URL than what the client originally requested.</p>
+<p>It's also possible to issue several subrequests at once without waiting for previous subrequests to finish.</p>
+<h3>example</h3>
+<div class="highlight"><pre><span class="k">location</span> <span class="s">/private/</span> <span class="p">{</span>
+    <span class="kn">proxy_pass</span> <span class="s">http://tornado</span><span class="p">;</span>
+    <span class="kn">auth_request</span> <span class="s">/auth</span> <span class="p">;</span>
+<span class="p">}</span>
+<span class="k">location</span> <span class="s">/auth</span> <span class="p">{</span>
+    <span class="kn">internal</span><span class="p">;</span>
+    <span class="kn">if</span> <span class="s">(</span><span class="nv">$cookie_user</span><span class="s">)</span> <span class="p">{</span>
+        <span class="kn">return</span> <span class="mi">200</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kn">return</span> <span class="mi">403</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">location</span> <span class="s">/</span> <span class="p">{</span>
+    <span class="kn">proxy_pass</span> <span class="s">http://tornado</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<hr />
+<h2>Handle GET request &amp;&amp; ngx_echo_module</h2>
+<h3>hello world</h3>
+<div class="highlight"><pre><span class="k">location</span> <span class="p">=</span> <span class="s">&#39;/hello&#39;</span> <span class="p">{</span>
+    <span class="kn">set</span> <span class="nv">$person</span> <span class="nv">$arg_person</span><span class="p">;</span>
+    <span class="kn">set_if_empty</span> <span class="nv">$person</span> <span class="s">&#39;anonymous&#39;</span><span class="p">;</span>
+    <span class="kn">echo</span> <span class="s">&quot;hello,</span> <span class="nv">$person&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h3>unescape url parameters</h3>
+<div class="highlight"><pre><span class="k">location</span> <span class="p">=</span> <span class="s">&#39;/hello&#39;</span> <span class="p">{</span>
+    <span class="kn">set_unescape_uri</span> <span class="nv">$person</span> <span class="nv">$arg_person</span><span class="p">;</span>
+    <span class="kn">set_if_empty</span> <span class="nv">$person</span> <span class="s">anonymous</span><span class="p">;</span>
+    <span class="kn">echo</span> <span class="s">&quot;hello,</span> <span class="nv">$person&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h3>issue subrequests</h3>
+<div class="highlight"><pre><span class="k">location</span> <span class="s">/series</span> <span class="p">{</span>
+    <span class="kn">echo_location</span> <span class="s">/sub1</span><span class="p">;</span>
+    <span class="kn">echo_subrequest_async</span> <span class="s">POST</span> <span class="s">/sub2</span> <span class="s">-b</span> <span class="s">world</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">location</span> <span class="s">/sub1</span> <span class="p">{</span>
+    <span class="kn">echo</span> <span class="s">hello</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">location</span> <span class="s">/sub2</span> <span class="p">{</span>
+    <span class="kn">echo</span> <span class="nv">$echo_request_body</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h3>series &amp;&amp; parallel</h3>
+<div class="highlight"><pre><span class="k">location</span> <span class="s">/series</span> <span class="p">{</span>
+    <span class="kn">echo_location</span> <span class="s">/sub1</span><span class="p">;</span>
+    <span class="kn">echo_subrequest_async</span> <span class="s">POST</span> <span class="s">/sub2</span> <span class="s">-b</span> <span class="s">world</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">location</span> <span class="s">/parallel</span> <span class="p">{</span>
+    <span class="kn">echo_reset_timer</span><span class="p">;</span>
+    <span class="kn">echo_location_async</span> <span class="s">/sub1</span><span class="p">;</span>
+    <span class="kn">echo_subrequest_async</span> <span class="s">POST</span> <span class="s">/sub2</span> <span class="s">-b</span> <span class="s">world</span><span class="p">;</span>
+    <span class="kn">echo</span> <span class="s">&quot;took</span> <span class="nv">$echo_timer_elapsed</span> <span class="s">sec</span> <span class="s">for</span> <span class="s">total.&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">location</span> <span class="s">/sub1</span> <span class="p">{</span>
+    <span class="kn">echo_sleep</span> <span class="mi">2</span><span class="p">;</span> <span class="c1"># sleeps 2 sec</span>
+    <span class="kn">echo</span> <span class="s">hello</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">location</span> <span class="s">/sub2</span> <span class="p">{</span>
+    <span class="kn">echo_sleep</span> <span class="mi">1</span><span class="p">;</span> <span class="c1"># sleeps 1 sec</span>
+    <span class="kn">echo</span> <span class="nv">$echo_request_body</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h4>result</h4>
+<div class="highlight"><pre><span class="nv">$ </span><span class="nb">time </span>curl http://gentoo1:9991/series
+hello
+world
+took 2.018 sec <span class="k">for </span>total.
+
+real    0m3.034s
+user    0m0.000s
+sys 0m0.000s
+
+<span class="nv">$ </span><span class="nb">time </span>curl http://gentoo1:9991/parallel
+hello
+world
+took 0.000 sec <span class="k">for </span>total.
+
+real    0m2.022s
+user    0m0.000s
+sys 0m0.000s
+</pre></div>
+
+
+<hr />
+<h2>ngx_drizzle for MySQl and Drizzle</h2>
+<h3>non-blocking</h3>
+<div class="highlight"><pre><span class="k">upstream</span> <span class="s">mysql_backend</span> <span class="p">{</span>
+    <span class="kn">drizzle_server</span> <span class="n">127.0.0.1</span><span class="p">:</span><span class="mi">3306</span> <span class="s">dbname=nginx_test</span>
+        <span class="s">password=</span> <span class="s">user=root</span>
+        <span class="s">protocol=mysql</span><span class="p">;</span>
+
+    <span class="kn">drizzle_keepalive</span> <span class="s">max=200</span> <span class="s">overflow=reject</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">location</span> <span class="p">~</span> <span class="sr">&#39;^/foo/(\d+)$&#39;</span> <span class="p">{</span>
+    <span class="kn">set</span> <span class="nv">$id</span> <span class="nv">$1</span><span class="p">;</span>
+    <span class="kn">drizzle_query</span> <span class="s">&quot;select</span> <span class="s">*</span> <span class="s">from</span> <span class="s">foo</span> <span class="s">where</span> <span class="s">a=</span><span class="nv">$id&quot;</span><span class="p">;</span>
+    <span class="kn">drizzle_pass</span> <span class="s">mysql_backend</span><span class="p">;</span>
+    <span class="kn">rds_json</span> <span class="no">on</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h3>cluster hashing</h3>
+<div class="highlight"><pre><span class="k">http</span> <span class="p">{</span>
+    <span class="kn">upstream</span> <span class="s">A</span> <span class="p">{</span>
+       <span class="kn">drizzle_server</span> <span class="s">...</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kn">upstream</span> <span class="s">B</span> <span class="p">{</span>
+       <span class="kn">drizzle_server</span> <span class="s">...</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kn">upstream</span> <span class="s">C</span> <span class="p">{</span>
+        <span class="kn">drizzle_server</span> <span class="s">...</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kn">upstream_list</span> <span class="s">my_cluster</span> <span class="s">A</span> <span class="s">B</span> <span class="s">C</span><span class="p">;</span>
+    <span class="kn">...</span>
+<span class="err">}</span>
+
+<span class="s">location</span> <span class="p">~</span> <span class="sr">&#39;^/name/(.*)&#39;</span> <span class="p">{</span>
+    <span class="kn">set</span> <span class="nv">$name</span> <span class="nv">$1</span><span class="p">;</span>
+    <span class="kn">set_quote_sql_str</span> <span class="nv">$quoted_name</span> <span class="nv">$name</span><span class="p">;</span>
+    <span class="kn">drizzle_query</span> <span class="s">&quot;select</span> <span class="s">*</span> <span class="s">from</span> <span class="s">name</span>
+       <span class="s">where</span> <span class="s">name=</span><span class="nv">$quoted_name&quot;</span><span class="p">;</span>
+
+    <span class="kn">set_hashed_upstream</span> <span class="nv">$backend</span> <span class="s">my_cluster</span> <span class="nv">$name</span><span class="p">;</span>
+    <span class="kn">drizzle_pass</span> <span class="nv">$backend</span><span class="p">;</span>
+
+    <span class="kn">rds_json</span> <span class="no">on</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<hr />
+<h2>ngx_postgres for PostgreSQL</h2>
+<p>Note: pass quickly</p>
+<hr />
+<h2>ngx_srcache &amp;&amp; ngx_srcache</h2>
+<h3>General location response cache based on Nginx subrequests</h3>
+<div class="highlight"><pre><span class="k">location</span> <span class="s">/memc</span> <span class="p">{</span>
+    <span class="kn">internal</span><span class="p">;</span>
+    <span class="kn">set_unescape_uri</span> <span class="nv">$memc_key</span> <span class="nv">$arg_key</span><span class="p">;</span>
+    <span class="kn">set</span> <span class="nv">$memc_exptime</span> <span class="nv">$arg_exptime</span><span class="p">;</span>
+    <span class="kn">memc_pass</span> <span class="s">memc_pass</span> <span class="n">127.0.0.1</span><span class="p">:</span><span class="mi">11211</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">location</span> <span class="s">/api</span> <span class="p">{</span>
+    <span class="kn">set</span> <span class="nv">$key</span> <span class="s">&quot;</span><span class="nv">$uri?$args&quot;</span><span class="p">;</span>
+    <span class="kn">srcache_fetch</span> <span class="s">GET</span> <span class="s">/memc</span> <span class="s">key=</span><span class="nv">$key</span><span class="p">;</span>
+    <span class="kn">srcache_store</span> <span class="s">PUT</span> <span class="s">/memc</span> <span class="s">key=</span><span class="nv">$key&amp;exptime=3600</span><span class="p">;</span>
+
+    <span class="c1"># proxy_pass/drizzle_pass/postgres_pass/etc</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<hr />
+<h2>ngx_redis2 for Redis</h2>
+<h3>multiple pipelined queries</h3>
+<div class="highlight"><pre><span class="k">upstream</span> <span class="s">redis</span> <span class="p">{</span>
+     <span class="kn">server</span> <span class="n">127.0.0.1</span><span class="p">:</span><span class="mi">6379</span><span class="p">;</span>
+    <span class="kn">keepalive</span> <span class="mi">1024</span> <span class="s">single</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">...</span>
+<span class="s">location</span> <span class="s">/</span> <span class="p">{</span>
+    <span class="kn">set_unescape_uri</span> <span class="nv">$key</span> <span class="nv">$arg_key</span><span class="p">;</span>
+    <span class="kn">set_unescape_uri</span> <span class="nv">$val</span> <span class="nv">$arg_val</span><span class="p">;</span>
+    <span class="kn">if</span> <span class="s">(</span><span class="nv">$key</span> <span class="p">=</span> <span class="s">&#39;&#39;)</span> <span class="p">{</span>
+        <span class="kn">return</span> <span class="mi">403</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="kn">redis2_query</span> <span class="s">set</span> <span class="nv">$key</span> <span class="nv">$val</span><span class="p">;</span>
+    <span class="kn">redis2_query</span> <span class="s">get</span> <span class="nv">$key</span><span class="p">;</span>
+    <span class="kn">redis2_pass</span> <span class="s">redis</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<hr />
+<h2>ngx_lua</h2>
+<h3>API</h3>
+<ul>
+<li>set_by_lua</li>
+<li>set_by_lua_file</li>
+<li>content_by_lua</li>
+<li>content_by_lua_file</li>
+<li>rewrite_by_lua</li>
+<li>rewrite_by_lua_file</li>
+<li>access_by_lua</li>
+<li>access_by_lua_file</li>
+<li>header_filter</li>
+<li>header_filter_by_lua_file</li>
+</ul>
+<h3>ngx_auth_request</h3>
+<div class="highlight"><pre>location / {
+    access_by_lua &#39;
+        local res = ngx.location.capture(&quot;/auth&quot;)
+
+        if res.status == ngx.HTTP_OK then
+            return
+        end
+
+        if res.status == ngx.HTTP_FORBIDDEN then
+            ngx.exit(res.status)
+        end
+
+        ngx.exit(ngx.HTTP_INTERNAL_SERVER_ERROR)
+    &#39;;
+
+    # proxy_pass/fastcgi_pass/postgres_pass/...
+}
+</pre></div>
+
+
+<h3>Multiple concurrent subrequests in Lua</h3>
+<div class="highlight"><pre>location = /api {
+    content_by_lua &#39;
+        local res1, res2, res3 =
+            ngx.location.capture_multi{
+                {&quot;/memc&quot;}, {&quot;/mysql&quot;}, {&quot;/postgres&quot;}
+            }
+        ngx.say(res1.body, res2.body, res3.body)
+    &#39;;
+}
+</pre></div>
+
+
+<h3>accessing upstream services in Lua</h3>
+<div class="highlight"><pre>location /access_google {
+    content_by_lua &#39;
+    local sock = ngx.socket.tcp()
+    local ok, err = sock:connect(&quot;www.google.com&quot;, 80)
+    if not ok then
+        ngx.say(&quot;failed to connect to google: &quot;, err)
+        return
+    end
+    ngx.say(&quot;successfully connected to google!&quot;)
+    sock:close()
+ &#39;;}
+</pre></div>
+
+
+<h3>High-level Lua libraries</h3>
+<ul>
+<li>lua-resty-mysql</li>
+<li>lua-resty-memcached</li>
+<li>lua-resty-redis</li>
+<li>lua-resty-upload</li>
+</ul>
+<h4>exmaple of lua-resty-redis</h4>
+<div class="highlight"><pre>content_by_lua &#39;
+    local redis = require &quot;resty.redis&quot;
+    local red = redis:new()
+    local ok, err = red:connect(&quot;127.0.0.1&quot;, 6379)
+    if not ok then
+        ngx.say(&quot;failed to connect: &quot;, err)
+        return
+    end
+    res, err = red:set(&quot;dog&quot;, &quot;an aniaml&quot;)
+    if not ok then
+        ngx.say(&quot;failed to set dog: &quot;, err)
+        return
+    end
+    ngx.say(&quot;set result: &quot;, res)
+    red:set_keepalive(0, 100)
+&#39;;
+</pre></div>
+
+
+<h2>Reference</h2>
+<ul>
+<li><a href="http://openresty.com/">http://openresty.com/</a></li>
+<li><a href="http://blog.martinfjordvald.com/2010/07/nginx-primer/">http://blog.martinfjordvald.com/2010/07/nginx-primer/</a></li>
+<li><a href="http://www.nginxguts.com/2011/01/phases/">http://www.nginxguts.com/2011/01/phases/</a></li>
+<li><a href="http://www.evanmiller.org/nginx-modules-guide-advanced.html">http://www.evanmiller.org/nginx-modules-guide-advanced.html</a></li>
+<li><a href="http://blog.sina.com.cn/s/articlelist_1834459124_1_1.html">http://blog.sina.com.cn/s/articlelist_1834459124_1_1.html</a></li>
+<li><a href="http://www.ruby-forum.com/topic/205063">http://www.ruby-forum.com/topic/205063</a></li>
+<li><a href="http://wiki.nginx.org/HttpEchoModule#echo_subrequest">http://wiki.nginx.org/HttpEchoModule#echo_subrequest</a></li>
+</ul>
+    </div>
+
+    <div class='post-footer'>
+        <div class='share-footer'>
+            <div id='dated' class="abbr published" title='2013-04-06T20:03:00'>
+                Posted Sat, 06 Apr 13
+            </div>
+
+             
+        </div>
+
+        <div id="article_meta">
+                        Category:
+            <a href="http://blog.atomd.me/category/technology/">technology</a>
+                                    <br />Tags:
+                        <a href="http://blog.atomd.me/tag/nginx-configuration-web/">nginx configuration web</a>
+                                </div>
+
+        
+    </div>
+</article>
+
+<footer>
+    <a href="http://blog.atomd.me/" class="button_accent">&larr;&nbsp;&nbsp;&nbsp;Back to blog</a>
+</footer>
+
+<div id="comments">
+    <h2>Comments</h2>
+    <div id="disqus_thread"></div>
+    <script type="text/javascript">
+    var disqus_identifier = "posts/technology/build-web-applications-with-nginx/";
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = 'http://atomdblog.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+    </script>
+    <noscript>Please enable JavaScript to view <a href="http://disqus.com/?ref_noscript">comments</a>.</noscript>
+</div>
+    </section>
+
+    <script type="text/javascript">
+	var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+	document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+	</script>
+	<script type="text/javascript">
+		try {
+			var pageTracker = _gat._getTracker("UA-35007756-1");
+			pageTracker._trackPageview();
+		} catch(err) {}</script>
+</body>
+</html>
