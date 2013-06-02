@@ -2,7 +2,7 @@ Title: 喜剧演员的忧伤
 Date: 2013-06-03 01:46
 Category: essay
 Tags: movie
-Slug: the-sadness-of-comedian
+Slug: the-sadness-of-comedians
 
 看了《中国合伙人》，最初是想去看教主逆袭的，看完后，撒了泪，笑了场，心情激动。dis 同学看我直接给了5星，便问，“这… 你给了社交网络多少分？”，我一查两个我果然都给了5星。
 
