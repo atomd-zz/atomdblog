@@ -50,6 +50,30 @@
         	
             <article class='listed'>
             <h1 class="title">
+                <a href="http://blog.atomd.me/posts/technology/basic-concept-of-routing-and-switching/" rel='bookmark'>路由交换技术的基本概念</a>
+            </h1>
+            <div class="article-content"> <p>前两天上课总结了基本的路由交换技术，澄清了一些概念，这里记录下：</p>
+<ol>
+<li>电路交换(circuit switching)：一次消息传递独占一条通路，到达目的结点后才释放。</li>
+<li>存储转发(store and forward)：整个消息(包)在向下一结点发送前完全缓存在一个中间结点。</li>
+<li>包交换(packet switching)：将消息分成若干较小的消息包(packets)，每个包以存储转发的方式发送。</li>
+<li>虚切入(virtual cut through — VCT)：路由收到包头信息后不必等待包尾到达，就向下一级路由传送，只有堵塞时才缓冲起来等待。</li>
+<li>蛀洞路由(Wormhole routing)：每个结点只有少量缓冲，一旦堵塞就像虫一样摆在路上，不堵塞时继续前进，消息包无需进入结点机的内存。</li>
+</ol>
+<p>相关比较</p>
+<table>
+<thead>
+<tr>
+<th align="center">#</th>
+<th align="center">总延迟</th>
+<th align="left">缓冲区</th>
+<th align="center">占用结点数 ...</th></tr></thead></table> </div>
+            <div class="abbr published">
+                Posted  <a href='http://blog.atomd.me/posts/technology/basic-concept-of-routing-and-switching/' title='2012-11-19T19:03:00'>Mon, 19 Nov 12</a> in <a href="http://blog.atomd.me/category/technology/">technology</a>.              
+            </div>
+        </article>
+            <article class='listed'>
+            <h1 class="title">
                 <a href="http://blog.atomd.me/posts/technology/network-configuration-notes/" rel='bookmark'>网络配置小记</a>
             </h1>
             <div class="article-content"> <h3>网桥基本配置</h3>
