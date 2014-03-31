@@ -1,88 +1,348 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <link rel="stylesheet" type="text/css" href="http://blog.atomd.me/theme/css/style.css"> 
-    <link rel="stylesheet" type="text/css" href="http://blog.atomd.me/theme/css/pygments.css">
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:800,400,300|Inconsolata' rel='stylesheet' type='text/css'>
-	<link href="/" type="application/atom+xml" rel="alternate" title="The Other Shore ATOM Feed" />
-	
-	
-            <title>The Other Shore</title>
-        <meta charset="utf-8" />
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8"> 
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="author" content="atomd">
-    </head>
+        <meta name="author" content="atomd" />
+        <meta name="copyright" content="atomd" />
 
-<body>
-    <section id="navbar">
-        <div class="user_meta">
-            <h1 id="user"><a href="http://blog.atomd.me" class="">atomd</a></h1>
-            <h2>Programmer • Writer</h2>
-                        </div>
-        <div class="nav-button">
-            <ul>
-                                                                                                                                        <li><a href="https://github.com/atomd">github</a></li>
-                                                <li><a href="https://bitbucket.org/atomd">bitbucket</a></li>
-                                                <li><a href="http://www.douban.com/people/atomd/">douban</a></li>
-                                 </ul>
-         </div>
-     </section>
-
-     <section id="sidebar">
-        <div class="user_meta">
-            <h1 id="user"><a href="http://blog.atomd.me" class="">atomd</a></h1>
-            <h2>Programmer • Writer</h2>
-            <ul>
-                                                                                                            <li><a href="https://github.com/atomd">github</a></li>
-                                        <li><a href="https://bitbucket.org/atomd">bitbucket</a></li>
-                                        <li><a href="http://www.douban.com/people/atomd/">douban</a></li>
-                            </ul>
-        </div>
-        <footer>
-            <address>
-                Powered by <a href='http://docs.getpelican.com/en/latest/'>Pelican</a>,
-                <a href='https://github.com/jamescooke/pelican-svbtle#readme'>theme info</a>.
-            </address>
-        </footer>
-    </section>
-
-    <section id="posts">
-        	<dl id="tag_list">
-		<ul>
-							<li class="tag-4"><a href="/tag/college.html">college</a></li>
-							<li class="tag-4"><a href="/tag/tips.html">tips</a></li>
-							<li class="tag-4"><a href="/tag/exception.html">exception</a></li>
-							<li class="tag-4"><a href="/tag/cache.html">cache</a></li>
-							<li class="tag-4"><a href="/tag/hadoop.html">hadoop</a></li>
-							<li class="tag-4"><a href="/tag/linode.html">linode</a></li>
-							<li class="tag-4"><a href="/tag/python.html">python</a></li>
-							<li class="tag-1"><a href="/tag/mysql.html">mysql</a></li>
-							<li class="tag-4"><a href="/tag/nginx configuration web.html">nginx configuration web</a></li>
-							<li class="tag-1"><a href="/tag/configuration.html">configuration</a></li>
-							<li class="tag-4"><a href="/tag/notes.html">notes</a></li>
-							<li class="tag-4"><a href="/tag/installation.html">installation</a></li>
-							<li class="tag-4"><a href="/tag/movie.html">movie</a></li>
-							<li class="tag-4"><a href="/tag/deployment.html">deployment</a></li>
-							<li class="tag-4"><a href="/tag/git.html">git</a></li>
-							<li class="tag-1"><a href="/tag/network.html">network</a></li>
-							<li class="tag-1"><a href="/tag/ha.html">ha</a></li>
-							<li class="tag-4"><a href="/tag/parallel.html">parallel</a></li>
-							<li class="tag-4"><a href="/tag/project.html">project</a></li>
-							<li class="tag-4"><a href="/tag/life.html">life</a></li>
-							<li class="tag-4"><a href="/tag/memory.html">memory</a></li>
-							<li class="tag-4"><a href="/tag/mha.html">mha</a></li>
-					</ul>
-	</dl>
-    </section>
-
+        <title>All Tags - The Other Shore
+</title>
+        <link href="http://cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="http://blog.atomd.me/theme/css/style.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="http://blog.atomd.me/theme/css/solarizedlight.css" media="screen">
+        <link rel="shortcut icon" href="http://blog.atomd.me/theme/images/favicon.ico" type="image/x-icon" />
+        <link rel="apple-touch-icon" href="http://blog.atomd.me/theme/images/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="57x57" href="http://blog.atomd.me/theme/images/apple-touch-icon-57x57.png" />
+        <link rel="apple-touch-icon" sizes="72x72" href="http://blog.atomd.me/theme/images/apple-touch-icon-72x72.png" />
+        <link rel="apple-touch-icon" sizes="114x114" href="http://blog.atomd.me/theme/images/apple-touch-icon-114x114.png" />
+        <link rel="apple-touch-icon" sizes="144x144" href="http://blog.atomd.me/theme/images/apple-touch-icon-144x144.png" />
+        <link rel="icon" href="http://blog.atomd.me/theme/images/apple-touch-icon-144x144.png" />
     <script type="text/javascript">
-	var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-	document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-	</script>
-	<script type="text/javascript">
-		try {
-			var pageTracker = _gat._getTracker("UA-35007756-1");
-			pageTracker._trackPageview();
-		} catch(err) {}</script>
-</body>
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-35007756-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+    </script>
+    </head>
+    <body>
+        <div id="content-sans-footer">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="http://blog.atomd.me/"><span class=site-name>The Other Shore</span></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right top-menu">
+                            <li ><a href="http://blog.atomd.me">Home</a></li>
+                            <li ><a href="http://blog.atomd.me/categories.html">Categories</a></li>
+                            <li  class="active"><a href="http://blog.atomd.me/tags.html">Tags</a></li>
+                            <li ><a href="http://blog.atomd.me/archives.html">Archives</a></li>
+                            <li><form class="navbar-search" action="http://blog.atomd.me/search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span10">
+
+<div class="row-fluid">
+    <header class="page_header span10 offset2">
+    <h1><a href="/tags.html">All Tags</a></h1>
+    </header>
+</div>
+<div class="row-fluid">
+    <div class="span8 offset2">
+        <form class="form-search">
+            <input type="text" class="input-medium search-query filterinput" placeholder="Find a tag">
+        </form>
+        <ul class="list-of-tags">
+            <li>
+            <a href="/tags.html#cache-ref">cache<span>1</span></a>
+            </li>
+            <li>
+            <a href="/tags.html#college-ref">college<span>1</span></a>
+            </li>
+            <li>
+            <a href="/tags.html#configuration-ref">configuration<span>2</span></a>
+            </li>
+            <li>
+            <a href="/tags.html#deployment-ref">deployment<span>1</span></a>
+            </li>
+            <li>
+            <a href="/tags.html#exception-ref">exception<span>1</span></a>
+            </li>
+            <li>
+            <a href="/tags.html#git-ref">git<span>1</span></a>
+            </li>
+            <li>
+            <a href="/tags.html#ha-ref">ha<span>3</span></a>
+            </li>
+            <li>
+            <a href="/tags.html#hadoop-ref">hadoop<span>1</span></a>
+            </li>
+            <li>
+            <a href="/tags.html#installation-ref">installation<span>1</span></a>
+            </li>
+            <li>
+            <a href="/tags.html#life-ref">life<span>1</span></a>
+            </li>
+            <li>
+            <a href="/tags.html#linode-ref">linode<span>1</span></a>
+            </li>
+            <li>
+            <a href="/tags.html#memory-ref">memory<span>1</span></a>
+            </li>
+            <li>
+            <a href="/tags.html#mha-ref">mha<span>1</span></a>
+            </li>
+            <li>
+            <a href="/tags.html#movie-ref">movie<span>1</span></a>
+            </li>
+            <li>
+            <a href="/tags.html#mysql-ref">mysql<span>2</span></a>
+            </li>
+            <li>
+            <a href="/tags.html#network-ref">network<span>2</span></a>
+            </li>
+            <li>
+            <a href="/tags.html#nginx-configuration-web-ref">nginx configuration web<span>1</span></a>
+            </li>
+            <li>
+            <a href="/tags.html#notes-ref">notes<span>1</span></a>
+            </li>
+            <li>
+            <a href="/tags.html#parallel-ref">parallel<span>1</span></a>
+            </li>
+            <li>
+            <a href="/tags.html#project-ref">project<span>1</span></a>
+            </li>
+            <li>
+            <a href="/tags.html#python-ref">python<span>1</span></a>
+            </li>
+            <li>
+            <a href="/tags.html#tips-ref">tips<span>1</span></a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="row-fluid">
+    <div class="span8 offset2">
+        <h2 id="cache-ref" class="tag-title">cache</h2>
+        <ul class="articles-in-tag">
+ 
+            <li><a href="http://blog.atomd.me/posts/technology/the-basic-of-scalable-cache-coherence/">高速缓存一致性的相关笔记和演讲稿  </a></li>
+        </ul>
+
+        <h2 id="college-ref" class="tag-title">college</h2>
+        <ul class="articles-in-tag">
+ 
+            <li><a href="http://blog.atomd.me/posts/essay/those-years-those-projects/">那些年 那些项目  </a></li>
+        </ul>
+
+        <h2 id="configuration-ref" class="tag-title">configuration</h2>
+        <ul class="articles-in-tag">
+ 
+            <li><a href="http://blog.atomd.me/posts/technology/hadoop-study-notes/">Hadoop学习笔记  </a></li>
+ 
+            <li><a href="http://blog.atomd.me/posts/technology/network-configuration-notes/">网络配置小记  </a></li>
+        </ul>
+
+        <h2 id="deployment-ref" class="tag-title">deployment</h2>
+        <ul class="articles-in-tag">
+ 
+            <li><a href="http://blog.atomd.me/posts/technology/a-milestone/">在Linode上部署python web项目  </a></li>
+        </ul>
+
+        <h2 id="exception-ref" class="tag-title">exception</h2>
+        <ul class="articles-in-tag">
+ 
+            <li><a href="http://blog.atomd.me/posts/technology/exception-notes/">关于错误处理的方式  </a></li>
+        </ul>
+
+        <h2 id="git-ref" class="tag-title">git</h2>
+        <ul class="articles-in-tag">
+ 
+            <li><a href="http://blog.atomd.me/posts/technology/git-tips/">一些 Git 的小技巧  </a></li>
+        </ul>
+
+        <h2 id="ha-ref" class="tag-title">ha</h2>
+        <ul class="articles-in-tag">
+ 
+            <li><a href="http://blog.atomd.me/posts/technology/ha-of-mysql/">MySQL的复制与高可用性  </a></li>
+ 
+            <li><a href="http://blog.atomd.me/posts/technology/network-ha/">网络资源的高可用技术使用以及分析  </a></li>
+ 
+            <li><a href="http://blog.atomd.me/posts/technology/the-usage-of-mha/">MHA 的使用方式  </a></li>
+        </ul>
+
+        <h2 id="hadoop-ref" class="tag-title">hadoop</h2>
+        <ul class="articles-in-tag">
+ 
+            <li><a href="http://blog.atomd.me/posts/technology/hadoop-study-notes/">Hadoop学习笔记  </a></li>
+        </ul>
+
+        <h2 id="installation-ref" class="tag-title">installation</h2>
+        <ul class="articles-in-tag">
+ 
+            <li><a href="http://blog.atomd.me/posts/technology/hadoop-study-notes/">Hadoop学习笔记  </a></li>
+        </ul>
+
+        <h2 id="life-ref" class="tag-title">life</h2>
+        <ul class="articles-in-tag">
+ 
+            <li><a href="http://blog.atomd.me/posts/essay/hello-world/">hello, world  </a></li>
+        </ul>
+
+        <h2 id="linode-ref" class="tag-title">linode</h2>
+        <ul class="articles-in-tag">
+ 
+            <li><a href="http://blog.atomd.me/posts/technology/a-milestone/">在Linode上部署python web项目  </a></li>
+        </ul>
+
+        <h2 id="memory-ref" class="tag-title">memory</h2>
+        <ul class="articles-in-tag">
+ 
+            <li><a href="http://blog.atomd.me/posts/essay/those-years-those-projects/">那些年 那些项目  </a></li>
+        </ul>
+
+        <h2 id="mha-ref" class="tag-title">mha</h2>
+        <ul class="articles-in-tag">
+ 
+            <li><a href="http://blog.atomd.me/posts/technology/the-usage-of-mha/">MHA 的使用方式  </a></li>
+        </ul>
+
+        <h2 id="movie-ref" class="tag-title">movie</h2>
+        <ul class="articles-in-tag">
+ 
+            <li><a href="http://blog.atomd.me/posts/essay/the-sadness-of-comedians/">喜剧演员的忧伤  </a></li>
+        </ul>
+
+        <h2 id="mysql-ref" class="tag-title">mysql</h2>
+        <ul class="articles-in-tag">
+ 
+            <li><a href="http://blog.atomd.me/posts/technology/ha-of-mysql/">MySQL的复制与高可用性  </a></li>
+ 
+            <li><a href="http://blog.atomd.me/posts/technology/the-usage-of-mha/">MHA 的使用方式  </a></li>
+        </ul>
+
+        <h2 id="network-ref" class="tag-title">network</h2>
+        <ul class="articles-in-tag">
+ 
+            <li><a href="http://blog.atomd.me/posts/technology/basic-concept-of-routing-and-switching/">路由交换技术的基本概念  </a></li>
+ 
+            <li><a href="http://blog.atomd.me/posts/technology/network-configuration-notes/">网络配置小记  </a></li>
+        </ul>
+
+        <h2 id="nginx-configuration-web-ref" class="tag-title">nginx configuration web</h2>
+        <ul class="articles-in-tag">
+ 
+            <li><a href="http://blog.atomd.me/posts/technology/build-web-applications-with-nginx/">使用Nginx构建Web应用程序  </a></li>
+        </ul>
+
+        <h2 id="notes-ref" class="tag-title">notes</h2>
+        <ul class="articles-in-tag">
+ 
+            <li><a href="http://blog.atomd.me/posts/technology/exception-notes/">关于错误处理的方式  </a></li>
+        </ul>
+
+        <h2 id="parallel-ref" class="tag-title">parallel</h2>
+        <ul class="articles-in-tag">
+ 
+            <li><a href="http://blog.atomd.me/posts/technology/the-basic-of-scalable-cache-coherence/">高速缓存一致性的相关笔记和演讲稿  </a></li>
+        </ul>
+
+        <h2 id="project-ref" class="tag-title">project</h2>
+        <ul class="articles-in-tag">
+ 
+            <li><a href="http://blog.atomd.me/posts/essay/those-years-those-projects/">那些年 那些项目  </a></li>
+        </ul>
+
+        <h2 id="python-ref" class="tag-title">python</h2>
+        <ul class="articles-in-tag">
+ 
+            <li><a href="http://blog.atomd.me/posts/technology/the-usage-of-python-in-douban/">python在douban的使用  </a></li>
+        </ul>
+
+        <h2 id="tips-ref" class="tag-title">tips</h2>
+        <ul class="articles-in-tag">
+ 
+            <li><a href="http://blog.atomd.me/posts/technology/git-tips/">一些 Git 的小技巧  </a></li>
+        </ul>
+
+    </div>
+</div>
+
+                </div>
+                <div class="span1"></div>
+            </div>
+        </div>
+    </div>
+<footer>
+<div id="footer">
+    <ul class="footer-content">
+        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="http://oncrashreboot.com/pelican-elegant" title="Theme Elegant Home Page">Elegant</a> by <a href="http://oncrashreboot.com" title="Talha Mansoor Home Page">Talha Mansoor</a></li>
+    </ul>
+</div>
+</footer>        <script src="http://code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+
+<script>
+    (function ($) {
+        // custom css expression for a case-insensitive contains()
+        jQuery.expr[':'].Contains = function(a,i,m){
+            return (a.textContent || a.innerText || "").toUpperCase().indexOf(m[3].toUpperCase())>=0;
+        };
+
+        function listFilter() {
+
+            $('.filterinput')
+            .change( function () {
+                var filter = $(this).val();
+                if(filter) {
+                    // this finds all links in a list that contain the input,
+                    // and hide the ones not containing the input while showing the ones that do
+                    $('.list-of-tags').find("a:not(:Contains(" + filter + "))").parent().hide();
+                    $('.list-of-tags').find("a:Contains(" + filter + ")").parent().show();
+                    } else {
+                    $('.list-of-tags').find("li").show();
+                }
+                return false;
+            })
+            .keyup( function () {
+                // fire the above change event after every letter
+                $(this).change();
+            });
+        }
+
+        //ondomready
+        $(function () {
+            listFilter($());
+        });
+    }(jQuery));
+
+</script>
+
+
+    </body>
 </html>

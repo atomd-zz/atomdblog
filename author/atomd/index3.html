@@ -1,140 +1,183 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <link rel="stylesheet" type="text/css" href="http://blog.atomd.me/theme/css/style.css"> 
-    <link rel="stylesheet" type="text/css" href="http://blog.atomd.me/theme/css/pygments.css">
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:800,400,300|Inconsolata' rel='stylesheet' type='text/css'>
-	<link href="/" type="application/atom+xml" rel="alternate" title="The Other Shore ATOM Feed" />
-	
-	
-            <title>The Other Shore - Articles by atomd</title>
-        <meta charset="utf-8" />
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8"> 
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="author" content="atomd">
-    </head>
+        <meta name="author" content="atomd" />
+        <meta name="copyright" content="atomd" />
 
-<body>
-    <section id="navbar">
-        <div class="user_meta">
-            <h1 id="user"><a href="http://blog.atomd.me" class="">atomd</a></h1>
-            <h2>Programmer • Writer</h2>
-                        </div>
-        <div class="nav-button">
-            <ul>
-                                                                                                                                        <li><a href="https://github.com/atomd">github</a></li>
-                                                <li><a href="https://bitbucket.org/atomd">bitbucket</a></li>
-                                                <li><a href="http://www.douban.com/people/atomd/">douban</a></li>
-                                 </ul>
-         </div>
-     </section>
-
-     <section id="sidebar">
-        <div class="user_meta">
-            <h1 id="user"><a href="http://blog.atomd.me" class="">atomd</a></h1>
-            <h2>Programmer • Writer</h2>
-            <ul>
-                                                                                                            <li><a href="https://github.com/atomd">github</a></li>
-                                        <li><a href="https://bitbucket.org/atomd">bitbucket</a></li>
-                                        <li><a href="http://www.douban.com/people/atomd/">douban</a></li>
-                            </ul>
-        </div>
-        <footer>
-            <address>
-                Powered by <a href='http://docs.getpelican.com/en/latest/'>Pelican</a>,
-                <a href='https://github.com/jamescooke/pelican-svbtle#readme'>theme info</a>.
-            </address>
-        </footer>
-    </section>
-
-    <section id="posts">
-        	
-            <article class='listed'>
-            <h1 class="title">
-                <a href="http://blog.atomd.me/posts/essay/the-sadness-of-comedians/" rel='bookmark'>喜剧演员的忧伤</a>
-            </h1>
-            <div class="article-content"> <p>看了《中国合伙人》，最初是想去看教主逆袭的，看完后，撒了泪，笑了场，心情激动。dis 同学看我直接给了5星，便问，“这… 你给了社交网络多少分？”，我一查两个我果然都给了5星。</p>
-<p>相比《致青春》莫名的矫情，《中国合伙人》有背景，有情节。更重要的是它真实，前半部分的青春更贴近我的大学生活，后半部分也是我们曾经筹划和幻想过的。</p>
-<p>其实这是部很忧伤的电影。孟晓骏问成东青，“你的梦想是什么？你的梦想是什么？”，成东青不知。这感觉扎克伯格在《社交网络》片尾一遍一遍刷新着前女友的页面一样，和去问一个喜剧演员“你快乐么？你快乐么？”一样，太无力了。</p>
-<p>最后，成东青只能痴痴望着苏梅，王阳和胖妞过起安稳的日子，孟晓骏靠今日之成就才能找回昔日的尊严。“流水它带走光阴的故事 ...</p> </div>
-            <div class="abbr published">
-                Posted  <a href='http://blog.atomd.me/posts/essay/the-sadness-of-comedians/' title='2013-06-03T01:46:00'>Mon, 03 Jun 13</a> in <a href="http://blog.atomd.me/category/essay/">essay</a>.              
-            </div>
-        </article>
-            <article class='listed'>
-            <h1 class="title">
-                <a href="http://blog.atomd.me/posts/technology/the-usage-of-mha/" rel='bookmark'>MHA 的使用方式</a>
-            </h1>
-            <div class="article-content"> <h2>安装</h2>
-<p>MHA由Node和Manager模块组成，Node运行在每一台MySQL服务器上。</p>
-<h3>安装 MHA Node</h3>
-<p><a href="https://github.com/yoshinorim/mha4mysql-node">https://github.com/yoshinorim/mha4mysql-node</a></p>
-<p><strong>所以相关服务器都需要部署Node模块</strong></p>
-<h4>依赖</h4>
-<ul>
-<li>DBD::mysql</li>
-</ul>
-<h4>Ubuntu/Debian</h4>
-<div class="highlight"><pre><span class="c">## If you have not installed DBD::mysql, install it like below, or install from source.</span>
-<span class="nv">$ </span>apt-get install libdbd-mysql-perl
-
-<span class="c">## Get MHA Node deb package ...</span></pre></div> </div>
-            <div class="abbr published">
-                Posted  <a href='http://blog.atomd.me/posts/technology/the-usage-of-mha/' title='2013-04-11T20:03:00'>Thu, 11 Apr 13</a> in <a href="http://blog.atomd.me/category/technology/">technology</a>.              
-            </div>
-        </article>
-            <article class='listed'>
-            <h1 class="title">
-                <a href="http://blog.atomd.me/posts/technology/the-usage-of-python-in-douban/" rel='bookmark'>python在douban的使用</a>
-            </h1>
-            <div class="article-content"> <hr />
-<p>内容源于洪强宁的一次分享, 以下是其演讲的一些笔记。</p>
-<h3>协同开发环境</h3>
-<ul>
-<li>协同开发环境 mercurial(hg)</li>
-<li>知识和项目管理 trac</li>
-<li>交流沟通 IRC <strong>开源协议（如上线通知机器人）</strong></li>
-</ul>
-<h3>前端</h3>
-<ul>
-<li>模板 Mako</li>
-<li>静态文件处理. 如自动处理静态文件URL和自动js内联</li>
-<li>预编译系统. @import</li>
-<li>引入pyScss.</li>
-</ul>
-<h3>移动端</h3>
-<ul>
-<li>APNS Agent.  <strong>gevent+bottle+APNSWrapper</strong></li>
-</ul>
-<h3>产品开发</h3>
-<ul>
-<li>web框架 Quixote v1.2 只使用了url dispatch部分，<strong>Traversal based，非正则匹配，类似目录层级的线性查找，比route based性能好，易于控制 ...</strong></li></ul> </div>
-            <div class="abbr published">
-                Posted  <a href='http://blog.atomd.me/posts/technology/the-usage-of-python-in-douban/' title='2013-04-20T21:03:00'>Sat, 20 Apr 13</a> in <a href="http://blog.atomd.me/category/technology/">technology</a>.              
-            </div>
-        </article>
-            <article class='listed'>
-            <h1 class="title">
-                <a href="http://blog.atomd.me/posts/life/those-years-those-projects/" rel='bookmark'>那些年，那些项目</a>
-            </h1>
-            <div class="article-content"> <p>留后再议。</p> </div>
-            <div class="abbr published">
-                Posted  <a href='http://blog.atomd.me/posts/life/those-years-those-projects/' title='2012-12-16T19:03:00'>Sun, 16 Dec 12</a> in <a href="http://blog.atomd.me/category/life/">life</a>.              
-            </div>
-        </article>
-        <p class="paginator">
-	                                    		        <a href="http://blog.atomd.me/author/atomd//index2.html" class="button_accent">&larr;&nbsp;&nbsp;&nbsp;newer</a>
-		                     
-		</p>
-    </section>
-
+        <title>The Other Shore - Articles by atomd</title>
+        <link href="http://cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="http://blog.atomd.me/theme/css/style.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="http://blog.atomd.me/theme/css/solarizedlight.css" media="screen">
+        <link rel="shortcut icon" href="http://blog.atomd.me/theme/images/favicon.ico" type="image/x-icon" />
+        <link rel="apple-touch-icon" href="http://blog.atomd.me/theme/images/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="57x57" href="http://blog.atomd.me/theme/images/apple-touch-icon-57x57.png" />
+        <link rel="apple-touch-icon" sizes="72x72" href="http://blog.atomd.me/theme/images/apple-touch-icon-72x72.png" />
+        <link rel="apple-touch-icon" sizes="114x114" href="http://blog.atomd.me/theme/images/apple-touch-icon-114x114.png" />
+        <link rel="apple-touch-icon" sizes="144x144" href="http://blog.atomd.me/theme/images/apple-touch-icon-144x144.png" />
+        <link rel="icon" href="http://blog.atomd.me/theme/images/apple-touch-icon-144x144.png" />
     <script type="text/javascript">
-	var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-	document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-	</script>
-	<script type="text/javascript">
-		try {
-			var pageTracker = _gat._getTracker("UA-35007756-1");
-			pageTracker._trackPageview();
-		} catch(err) {}</script>
-</body>
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-35007756-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+    </script>
+    </head>
+    <body>
+        <div id="content-sans-footer">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="http://blog.atomd.me/"><span class=site-name>The Other Shore</span></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right top-menu">
+                            <li ><a href="http://blog.atomd.me">Home</a></li>
+                            <li ><a href="http://blog.atomd.me/categories.html">Categories</a></li>
+                            <li ><a href="http://blog.atomd.me/tags.html">Tags</a></li>
+                            <li ><a href="http://blog.atomd.me/archives.html">Archives</a></li>
+                            <li><form class="navbar-search" action="http://blog.atomd.me/search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span10">
+<div class="row-fluid">
+
+    <div class="row-fluid">
+
+    </div>
+
+    <div class="row-fluid">
+        <div class="span12">
+            <header>
+            <h1 id="recent-posts">Recent Posts <a id="allposts" href="http://blog.atomd.me/archives.html">all posts</a></h1>
+            </header>
+            <ul class="list-all-articles">
+                <li>
+                <a href="http://blog.atomd.me/posts/technology/network-ha/">网络资源的高可用技术使用以及分析  </a> 
+                <time pubdate="pubdate" datetime="2013-08-25T19:03:00">日 25 八月 2013</time>
+                </li>
+            </ul>
+            <ul class="list-all-articles">
+                <li>
+                <a href="http://blog.atomd.me/posts/essay/the-sadness-of-comedians/">喜剧演员的忧伤  </a> 
+                <time pubdate="pubdate" datetime="2013-06-03T01:46:00">一 03 六月 2013</time>
+                </li>
+            </ul>
+            <ul class="list-all-articles">
+                <li>
+                <a href="http://blog.atomd.me/posts/technology/a-milestone/">在Linode上部署python web项目  </a> 
+                <time pubdate="pubdate" datetime="2013-05-02T20:23:00">四 02 五月 2013</time>
+                </li>
+            </ul>
+            <ul class="list-all-articles">
+                <li>
+                <a href="http://blog.atomd.me/posts/technology/the-usage-of-python-in-douban/">python在douban的使用  </a> 
+                <time pubdate="pubdate" datetime="2013-04-20T21:03:00">六 20 四月 2013</time>
+                </li>
+            </ul>
+            <ul class="list-all-articles">
+                <li>
+                <a href="http://blog.atomd.me/posts/technology/the-usage-of-mha/">MHA 的使用方式  </a> 
+                <time pubdate="pubdate" datetime="2013-04-11T20:03:00">四 11 四月 2013</time>
+                </li>
+            </ul>
+            <ul class="list-all-articles">
+                <li>
+                <a href="http://blog.atomd.me/posts/technology/ha-of-mysql/">MySQL的复制与高可用性  </a> 
+                <time pubdate="pubdate" datetime="2013-04-08T19:03:00">一 08 四月 2013</time>
+                </li>
+            </ul>
+            <ul class="list-all-articles">
+                <li>
+                <a href="http://blog.atomd.me/posts/technology/exception-notes/">关于错误处理的方式  </a> 
+                <time pubdate="pubdate" datetime="2013-04-08T12:34:00">一 08 四月 2013</time>
+                </li>
+            </ul>
+            <ul class="list-all-articles">
+                <li>
+                <a href="http://blog.atomd.me/posts/technology/build-web-applications-with-nginx/">使用Nginx构建Web应用程序  </a> 
+                <time pubdate="pubdate" datetime="2013-04-06T20:03:00">六 06 四月 2013</time>
+                </li>
+            </ul>
+            <ul class="list-all-articles">
+                <li>
+                <a href="http://blog.atomd.me/posts/technology/git-tips/">一些 Git 的小技巧  </a> 
+                <time pubdate="pubdate" datetime="2013-03-10T19:03:00">日 10 三月 2013</time>
+                </li>
+            </ul>
+            <ul class="list-all-articles">
+                <li>
+                <a href="http://blog.atomd.me/posts/technology/hadoop-study-notes/">Hadoop学习笔记  </a> 
+                <time pubdate="pubdate" datetime="2013-01-13T19:03:00">日 13 一月 2013</time>
+                </li>
+            </ul>
+            <ul class="list-all-articles">
+                <li>
+                <a href="http://blog.atomd.me/posts/essay/those-years-those-projects/">那些年 那些项目  </a> 
+                <time pubdate="pubdate" datetime="2012-11-25T19:03:00">日 25 十一月 2012</time>
+                </li>
+            </ul>
+            <ul class="list-all-articles">
+                <li>
+                <a href="http://blog.atomd.me/posts/technology/basic-concept-of-routing-and-switching/">路由交换技术的基本概念  </a> 
+                <time pubdate="pubdate" datetime="2012-11-19T19:03:00">一 19 十一月 2012</time>
+                </li>
+            </ul>
+            <ul class="list-all-articles">
+                <li>
+                <a href="http://blog.atomd.me/posts/technology/network-configuration-notes/">网络配置小记  </a> 
+                <time pubdate="pubdate" datetime="2012-11-19T19:03:00">一 19 十一月 2012</time>
+                </li>
+            </ul>
+            <ul class="list-all-articles">
+                <li>
+                <a href="http://blog.atomd.me/posts/technology/the-basic-of-scalable-cache-coherence/">高速缓存一致性的相关笔记和演讲稿  </a> 
+                <time pubdate="pubdate" datetime="2012-10-28T19:03:00">日 28 十月 2012</time>
+                </li>
+            </ul>
+            <ul class="list-all-articles">
+                <li>
+                <a href="http://blog.atomd.me/posts/essay/hello-world/">hello, world  </a> 
+                <time pubdate="pubdate" datetime="2012-10-24T19:03:00">三 24 十月 2012</time>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+                </div>
+                <div class="span1"></div>
+            </div>
+        </div>
+    </div>
+<footer>
+<div id="footer">
+    <ul class="footer-content">
+        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="http://oncrashreboot.com/pelican-elegant" title="Theme Elegant Home Page">Elegant</a> by <a href="http://oncrashreboot.com" title="Talha Mansoor Home Page">Talha Mansoor</a></li>
+    </ul>
+</div>
+</footer>        <script src="http://code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+    </body>
 </html>

@@ -1,76 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <link rel="stylesheet" type="text/css" href="http://blog.atomd.me/theme/css/style.css"> 
-    <link rel="stylesheet" type="text/css" href="http://blog.atomd.me/theme/css/pygments.css">
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:800,400,300|Inconsolata' rel='stylesheet' type='text/css'>
-	<link href="/" type="application/atom+xml" rel="alternate" title="The Other Shore ATOM Feed" />
-	
-			
-    <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML" type= "text/javascript">
-       MathJax.Hub.Config({
-           config: ["MMLorHTML.js"],
-           jax: ["input/TeX","input/MathML","output/HTML-CSS","output/NativeMML"],
-           TeX: { extensions: ["AMSmath.js","AMSsymbols.js","noErrors.js","noUndefined.js"], equationNumbers: { autoNumber: "AMS" } },
-           extensions: ["tex2jax.js","mml2jax.js","MathMenu.js","MathZoom.js"],
-           tex2jax: { 
-               inlineMath: [ ['$','$'] ],
-               displayMath: [ ['$$','$$'] ],
-               processEscapes: true },
-           "HTML-CSS": {
-               styles: { ".MathJax .mo, .MathJax .mi": {color: "black ! important"}}
-           }
-       });
-    </script>
-
-	
-            <title>高速缓存一致性的相关笔记和演讲稿 - The Other Shore</title>
-        <meta charset="utf-8" />
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8"> 
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="author" content="atomd">
+        <meta name="author" content="atomd" />
+        <meta name="copyright" content="atomd" />
+
+<meta name="keywords" content="parallel, cache, technology, " />
+        <title>高速缓存一致性的相关笔记和演讲稿 - The Other Shore
+</title>
+        <link href="http://cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="http://blog.atomd.me/theme/css/style.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="http://blog.atomd.me/theme/css/solarizedlight.css" media="screen">
+        <link rel="shortcut icon" href="http://blog.atomd.me/theme/images/favicon.ico" type="image/x-icon" />
+        <link rel="apple-touch-icon" href="http://blog.atomd.me/theme/images/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="57x57" href="http://blog.atomd.me/theme/images/apple-touch-icon-57x57.png" />
+        <link rel="apple-touch-icon" sizes="72x72" href="http://blog.atomd.me/theme/images/apple-touch-icon-72x72.png" />
+        <link rel="apple-touch-icon" sizes="114x114" href="http://blog.atomd.me/theme/images/apple-touch-icon-114x114.png" />
+        <link rel="apple-touch-icon" sizes="144x144" href="http://blog.atomd.me/theme/images/apple-touch-icon-144x144.png" />
+        <link rel="icon" href="http://blog.atomd.me/theme/images/apple-touch-icon-144x144.png" />
+    <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-35007756-1']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+    </script>
     </head>
-
-<body>
-    <section id="navbar">
-        <div class="user_meta">
-            <h1 id="user"><a href="http://blog.atomd.me" class="">atomd</a></h1>
-            <h2>Programmer • Writer</h2>
-                        </div>
-        <div class="nav-button">
-            <ul>
-                                                                                                                                        <li><a href="https://github.com/atomd">github</a></li>
-                                                <li><a href="https://bitbucket.org/atomd">bitbucket</a></li>
-                                                <li><a href="http://www.douban.com/people/atomd/">douban</a></li>
-                                 </ul>
-         </div>
-     </section>
-
-     <section id="sidebar">
-        <div class="user_meta">
-            <h1 id="user"><a href="http://blog.atomd.me" class="">atomd</a></h1>
-            <h2>Programmer • Writer</h2>
-            <ul>
-                                                                                                            <li><a href="https://github.com/atomd">github</a></li>
-                                        <li><a href="https://bitbucket.org/atomd">bitbucket</a></li>
-                                        <li><a href="http://www.douban.com/people/atomd/">douban</a></li>
-                            </ul>
+    <body>
+        <div id="content-sans-footer">
+        <div class="navbar navbar-static-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="http://blog.atomd.me/"><span class=site-name>The Other Shore</span></a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right top-menu">
+                            <li ><a href="http://blog.atomd.me">Home</a></li>
+                            <li ><a href="http://blog.atomd.me/categories.html">Categories</a></li>
+                            <li ><a href="http://blog.atomd.me/tags.html">Tags</a></li>
+                            <li ><a href="http://blog.atomd.me/archives.html">Archives</a></li>
+                            <li><form class="navbar-search" action="http://blog.atomd.me/search.html" onsubmit="return validateForm(this.elements['q'].value);"> <input type="text" class="search-query" placeholder="Search" name="q" id="tipue_search_input"></form></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-        <footer>
-            <address>
-                Powered by <a href='http://docs.getpelican.com/en/latest/'>Pelican</a>,
-                <a href='https://github.com/jamescooke/pelican-svbtle#readme'>theme info</a>.
-            </address>
-        </footer>
-    </section>
+        <div class="container-fluid">
+            <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span10">
+<article>
+<div class="row-fluid">
+    <header class="page_header span10 offset2">
+    <h1><a href="http://blog.atomd.me/posts/technology/the-basic-of-scalable-cache-coherence/"> 高速缓存一致性的相关笔记和演讲稿  </a></h1>
+    </header>
+</div>
 
-    <section id="posts">
-        <article>
-    <h1 class="title">
-        <a href="http://blog.atomd.me/posts/technology/the-basic-of-scalable-cache-coherence/" rel="bookmark">高速缓存一致性的相关笔记和演讲稿</a>
-    </h1>
+<div class="row-fluid">
+        <div class="span8 offset2 article-content">
 
-    <div class='article-content'>
-        <p>我在计算机并行体系结构的课程上对高速缓存一致性进行了介绍。准备过程中我阅读了老师推荐的论文和书籍，也在互联网上查阅很多资料。</p>
+            <p>我在计算机并行体系结构的课程上对高速缓存一致性进行了介绍。准备过程中我阅读了老师推荐的论文和书籍，也在互联网上查阅很多资料。</p>
 <p>我准备的内容基本涵盖了缓存一致性的大部分基础知识，包括基于监听和基于目录式的缓存一致性协议的概念及权衡因素，并介绍了斯坦福的DASH协议和基于目录的协议内存占用过大的优化方案，最后还探讨了伪共享和空间局部性对性能影响。</p>
 <p>这些偏底层的技术还是让我花了不少时间，应该庆幸自己不是基于硬件来做设计和开发。立竿见影的收获是提供了机器的视角给我，对于以前不太理解的多线程技巧也似乎找到了一些感觉。并外《并行计算机体系结构——硬件/软件结合的设计和分析》这本书内容很好，论述也清晰，神奇的是1998年出版的书到现在也没有过时。</p>
 <p>下面就是我做的演示文稿:)</p>
@@ -80,7 +78,7 @@
 <li>Reducing the average memory access time</li>
 <li>Reducing the bandwidth requirement</li>
 </ol>
-<p><img alt="figure-1" src="http://blog.atomd.me/static/images/scalable-cache-coherence/common-memory-hierarchies-found-in-multiprocessors.png" /></p>
+<p><img alt="figure-1" src="http://blog.atomd.me/images/scalable-cache-coherence/common-memory-hierarchies-found-in-multiprocessors.png" /></p>
 <p>从存储器层次上看，程序员对存储器容量和速度的期望是无限的，但是和存储器的成本相矛盾。每一层都要从一个较大的存储器空间中把地址映射到一个较小的但是更快上层容器。而高速缓存就是介于CPU、寄存器与主存之间的一层。</p>
 <p>而高速缓存总是扮演着重要角色，对于处理器而言，高速缓存可以减少平均数据访问的时间。而对于共享的互连设备和存储系统而言，可以减少每个处理器需要的通信带宽。</p>
 <p>图中表明了四类层次模型，与多处理器的规模相对应。</p>
@@ -102,7 +100,7 @@
 <li>Pervasive and performance critical in multiprocessors.</li>
 <li>Each read should return the latest value written to that location.</li>
 </ul>
-<p><img alt="figure-2" src="http://blog.atomd.me/static/images/scalable-cache-coherence/example-cache-coherence-problem.png" /></p>
+<p><img alt="figure-2" src="http://blog.atomd.me/images/scalable-cache-coherence/example-cache-coherence-problem.png" /></p>
 <p><em>Write back cache</em> or <em>Write through cache</em> ? <br />
 <em>Write invalidate</em>  or <em>Write update</em> ？</p>
 <p>多处理器中的高速缓存一致性问题是普遍存在的，而且对计算机性能有着重大的影响。其中缓存一致性 （ Cache Coherence ) 保证的是： <strong>总是能读到最新写入的值</strong>。</p>
@@ -158,7 +156,7 @@
 <li>All caches see the same sequence of writes.</li>
 <li>The cache coherence traffic creates another limit on the scale and the speed of the processors. </li>
 </ul>
-<p><img alt="figure-3" src="http://blog.atomd.me/static/images/scalable-cache-coherence/snoopy-cache-coherent-multiprocessor.png" /></p>
+<p><img alt="figure-3" src="http://blog.atomd.me/images/scalable-cache-coherence/snoopy-cache-coherent-multiprocessor.png" /></p>
 <ul>
 <li>
 <p>处理读缺失 ： 实现写失效协议的关键是使用总线或其他广播媒介来完成无效操作。处理器首先取得总线控制权然后广播无效数据的地址。所有处理器监听后检查是否存在副本，如果有则设置无效。</p>
@@ -169,7 +167,7 @@
 </ul>
 <hr />
 <h2>MESI (Illinois) Protocol</h2>
-<p><img alt="figure-4" src="http://blog.atomd.me/static/images/scalable-cache-coherence/state-transition-diagram-for-the-Illinois-MESI-protocol.png" /></p>
+<p><img alt="figure-4" src="http://blog.atomd.me/images/scalable-cache-coherence/state-transition-diagram-for-the-Illinois-MESI-protocol.png" /></p>
 <h3>States</h3>
 <ul>
 <li>Modified</li>
@@ -211,11 +209,11 @@
 <li>Coherence state maintained in a directory associated with memory</li>
 <li>Requests to a memory block do not need broadcasts</li>
 </ul>
-<p><img alt="figure-5" src="http://blog.atomd.me/static/images/scalable-cache-coherence/a-scalable-multiprocessor-with-directories.png" /></p>
+<p><img alt="figure-5" src="http://blog.atomd.me/images/scalable-cache-coherence/a-scalable-multiprocessor-with-directories.png" /></p>
 <p>我们的讨论主要是基于分布式存储器多处理系统。正如监听协议一样，目录协议也必须实现两个操作 : 处理读缺失和处理共享未写回的缓存行的写操作。为了实现这些操作，目录必须跟踪每个缓存行的状态。</p>
 <hr />
 <h2>Example: DASH</h2>
-<p><img alt="figure-6" src="http://blog.atomd.me/static/images/scalable-cache-coherence/block-diagram-of-a-2x2-bash-prototype.png" /></p>
+<p><img alt="figure-6" src="http://blog.atomd.me/images/scalable-cache-coherence/block-diagram-of-a-2x2-bash-prototype.png" /></p>
 <p>下面我们以斯坦福经典的DASH协议为例子来说明基于目录式缓存一致性协议。</p>
 <p>这种结构是由一定数目的处理结点构成的，结点之间通过一个高带宽、低延迟的互连网络连接。DASH系统的可扩展性要求尽量避免广播，而且不依赖于任何具体的网络拓扑结构。</p>
 <hr />
@@ -237,7 +235,7 @@
 </li>
 <li>Mesh interconnected network</li>
 </ul>
-<p><img alt="figure-7" src="http://blog.atomd.me/static/images/scalable-cache-coherence/dash-architecture.png" /></p>
+<p><img alt="figure-7" src="http://blog.atomd.me/images/scalable-cache-coherence/dash-architecture.png" /></p>
 <p>DASH每个节点(cluster) 是由4个高性能处理器组成，物理存储器分布在各结点中，每个结
 点都可访问整个存储器。处理器组内的高速缓存间是利用基于总线的监听方案来维持一致
 性，而组间则利用分布式基于目录的一致性协议维持高速缓存一致性。</p>
@@ -246,7 +244,7 @@
 <p>目录控制器主要维护了节点间的缓存一致性，并提供了到互联网络的接口。</p>
 <hr />
 <h2>DASH Directory board</h2>
-<p><img alt="figure-7" src="http://blog.atomd.me/static/images/scalable-cache-coherence/directory-board-block-diagram.png" /></p>
+<p><img alt="figure-7" src="http://blog.atomd.me/images/scalable-cache-coherence/directory-board-block-diagram.png" /></p>
 <p>目录控制板器是单块印刷电路，上面有五个主要部件：</p>
 <ul>
 <li>DC：目录控制器，含有对应于该处理器组内的内存的目录存储器，还负责转发对远程组的请求和回应。</li>
@@ -308,7 +306,7 @@
 <li>If the block is in an uncached-remote or shared-remote state the directory controller sends the data over the reply network to the requesting cluster. </li>
 <li>Requests to remote memory with directory in dirty-remote state explained in the figure</li>
 </ul>
-<p><img alt="figure-7" src="http://blog.atomd.me/static/images/scalable-cache-coherence/flow-of-Read-Request-to-remote-memory-with-directory-in-dirty-remote-state.png" /></p>
+<p><img alt="figure-7" src="http://blog.atomd.me/images/scalable-cache-coherence/flow-of-Read-Request-to-remote-memory-with-directory-in-dirty-remote-state.png" /></p>
 <hr />
 <h2>Read-Exclusive Requests</h2>
 <ul>
@@ -333,8 +331,8 @@
 <li>Requests to remote nodes in shared-remote state explained in the figure</li>
 <li>Requests to remote nodes in dirty-remote state explained in the figure</li>
 </ul>
-<p><img alt="figure-7" src="http://blog.atomd.me/static/images/scalable-cache-coherence/flow-of-read-exclusive-request-to-remote-memory-with-directory-in-shared-remote-state.png" />
-<img alt="figure-7" src="http://blog.atomd.me/static/images/scalable-cache-coherence/flow-of-read-exclusive-request-to-remote-memory-with-directory-in-dirty-remote-state.png" /></p>
+<p><img alt="figure-7" src="http://blog.atomd.me/images/scalable-cache-coherence/flow-of-read-exclusive-request-to-remote-memory-with-directory-in-shared-remote-state.png" />
+<img alt="figure-7" src="http://blog.atomd.me/images/scalable-cache-coherence/flow-of-read-exclusive-request-to-remote-memory-with-directory-in-dirty-remote-state.png" /></p>
 <hr />
 <h2>Other Implementation Details</h2>
 <ul>
@@ -408,7 +406,7 @@
 <hr />
 <h2>False Sharing vs. Spatial Locality</h2>
 <p><strong>False sharing</strong> occurs when threads on different processors modify different variables that reside on the same cache line. This invalidates the cache line and forces an update, which hurts performance.</p>
-<p><img alt="figure-7" src="http://blog.atomd.me/static/images/scalable-cache-coherence/false-sharing.png" /></p>
+<p><img alt="figure-7" src="http://blog.atomd.me/images/scalable-cache-coherence/false-sharing.png" /></p>
 <p>多处理器共享一个缓存行，当同时修改不同的变量，就会产生不必要的失效，这极大影响了性能。缓存行的话可以减少读扑空，但是同时会引入更多伪共享，这就是空间局部性和伪共享的矛盾。</p>
 <h3>Conclusion</h3>
 <ol>
@@ -457,57 +455,129 @@
 <li>J. Torrellas, M. Lam &amp; J. Hennessy "False Sharing and Spatial Locality in Multiprocessor Caches" Transactions on Computers, June 1994.</li>
 <li>"Computer Architecture: A Quantitative Approach, 4th Edition" by John L. Hennessy and David A. Patterson, 2006.</li>
 <li>The presentation named "Directory-Based Cache Coherence Protocols" of Portland State University ECE 588/688. [<a href="http://web.cecs.pdx.edu/~alaa/ece588/notes/directory-protocols.pdf">link</a>]</li>
-</ol>
-    </div>
+</ol><script type= "text/javascript">
+    if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+        var mathjaxscript = document.createElement('script');
+        mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+        mathjaxscript.type = 'text/javascript';
+        mathjaxscript.src = 'https:' == document.location.protocol
+                ? 'https://c328740.ssl.cf1.rackcdn.com/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
+                : 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+        mathjaxscript[(window.opera ? "innerHTML" : "text")] =
+            "MathJax.Hub.Config({" +
+            "    config: ['MMLorHTML.js']," +
+            "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'AMS' } }," +
+            "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+            "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+            "    displayAlign: 'center'," +
+            "    displayIndent: '0em'," +
+            "    showMathMenu: true," +
+            "    tex2jax: { " +
+            "        inlineMath: [ ['$','$'] ], " +
+            "        displayMath: [ ['$$','$$'] ]," +
+            "        processEscapes: true," +
+            "        preview: 'TeX'," +
+            "    }, " +
+            "    'HTML-CSS': { " +
+            "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'black ! important'} }" +
+            "    } " +
+            "}); ";
+        (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+    }
+</script>
 
-    <div class='post-footer'>
-        <div class='share-footer'>
-            <div id='dated' class="abbr published" title='2012-10-28T19:03:00'>
-                Posted Sun, 28 Oct 12
-            </div>
-
-             
+            <aside>
+            <nav>
+            <ul class="articles_timeline">
+ 
+                <li class="previous_article">« <a href="http://blog.atomd.me/posts/essay/hello-world/" title="Previous: hello, world">hello, world</a></li>
+ 
+                <li class="next_article"><a href="http://blog.atomd.me/posts/technology/network-configuration-notes/" title="Next: 网络配置小记">网络配置小记</a> »</li>
+            </ul>
+            </nav>
+            </aside>
+<section>
+<div class="accordion" id="accordion2">
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle disqus-comment-count" data-toggle="collapse" data-parent="#accordion2" 
+                href="http://blog.atomd.me/posts/technology/the-basic-of-scalable-cache-coherence//#disqus_thread">
+                Comments
+            </a>
         </div>
+        <div id="disqus_thread" class="accordion-body collapse">
+            <div class="accordion-inner">
+                <div class="comments">
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    var disqus_shortname = 'atomdblog';
+        var disqus_identifier = 'http://blog.atomd.me/posts/technology/the-basic-of-scalable-cache-coherence/';
+    var disqus_url = 'http://blog.atomd.me/posts/technology/the-basic-of-scalable-cache-coherence/';
 
-        <div id="article_meta">
-                        Category:
-            <a href="http://blog.atomd.me/category/technology/">technology</a>
-                                    <br />Tags:
-                        <a href="http://blog.atomd.me/tag/parallel/">parallel</a>
-                        <a href="http://blog.atomd.me/tag/cache/">cache</a>
-                                </div>
-
-        
-    </div>
-</article>
-
-<footer>
-    <a href="http://blog.atomd.me/" class="button_accent">&larr;&nbsp;&nbsp;&nbsp;Back to blog</a>
-</footer>
-
-<div id="comments">
-    <h2>Comments</h2>
-    <div id="disqus_thread"></div>
-    <script type="text/javascript">
-    var disqus_identifier = "posts/technology/the-basic-of-scalable-cache-coherence/";
     (function() {
-        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-        dsq.src = 'http://atomdblog.disqus.com/embed.js';
-        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-    </script>
-    <noscript>Please enable JavaScript to view <a href="http://disqus.com/?ref_noscript">comments</a>.</noscript>
+         var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+         dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+         (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+     })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>                </div>
+            </div>
+        </div>
+    </div>
 </div>
-    </section>
+</section>
+        </div>
+        <section>
+        <div class="span2" style="float:right;font-size:0.9em;">
+ 
+            <h4>Published</h4>
+            <time pubdate="pubdate" datetime="2012-10-28T19:03:00">Oct 28, 2012</time>
+            <h4>Category</h4>
+            <a class="category-link" href="/categories.html#technology-ref">technology</a> 
+            <h4>Tags</h4>
+            <ul class="list-of-tags tags-in-article"> 
+                <li><a href="/tags.html#cache-ref">cache
+                    <span>1</span>
+</a></li>
+                <li><a href="/tags.html#parallel-ref">parallel
+                    <span>1</span>
+</a></li>
+            </ul>
 
-    <script type="text/javascript">
-	var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-	document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-	</script>
-	<script type="text/javascript">
-		try {
-			var pageTracker = _gat._getTracker("UA-35007756-1");
-			pageTracker._trackPageview();
-		} catch(err) {}</script>
-</body>
+        </div>
+        </section>
+    </div>
+    </article>
+                </div>
+                <div class="span1"></div>
+            </div>
+        </div>
+    </div>
+<footer>
+<div id="footer">
+    <ul class="footer-content">
+        <li class="elegant-power">Powered by <a href="http://getpelican.com/" title="Pelican Home Page">Pelican</a>. Theme: <a href="http://oncrashreboot.com/pelican-elegant" title="Theme Elegant Home Page">Elegant</a> by <a href="http://oncrashreboot.com" title="Talha Mansoor Home Page">Talha Mansoor</a></li>
+    </ul>
+</div>
+</footer>            <script src="http://code.jquery.com/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+        <script>
+            function validateForm(query)
+            {
+                return (query.length > 0);
+            }
+        </script>
+
+<script type="text/javascript">
+    var disqus_shortname = 'atomdblog';
+
+    (function () {
+        var s = document.createElement('script'); s.async = true;
+        s.type = 'text/javascript';
+        s.src = '//' + disqus_shortname + '.disqus.com/count.js';
+        (document.getElementsByTagName('HEAD')[0] || document.getElementsByTagName('BODY')[0]).appendChild(s);
+    }());
+    </script>
+    </body>
 </html>

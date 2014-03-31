@@ -6,8 +6,8 @@
         <meta name="author" content="atomd" />
         <meta name="copyright" content="atomd" />
 
-<meta name="keywords" content="network, configuration, technology, " />
-        <title>网络配置小记 - The Other Shore
+<meta name="keywords" content="ha, technology, " />
+        <title>网络资源的高可用技术使用以及分析 - The Other Shore
 </title>
         <link href="http://cdn-images.mailchimp.com/embedcode/slim-081711.css" rel="stylesheet" type="text/css">
         <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
@@ -61,83 +61,148 @@
 <article>
 <div class="row-fluid">
     <header class="page_header span10 offset2">
-    <h1><a href="http://blog.atomd.me/posts/technology/network-configuration-notes/"> 网络配置小记  </a></h1>
+    <h1><a href="http://blog.atomd.me/posts/technology/network-ha/"> 网络资源的高可用技术使用以及分析  </a></h1>
     </header>
 </div>
 
 <div class="row-fluid">
         <div class="span8 offset2 article-content">
 
-            <h3>网桥基本配置</h3>
-<p>在eth0上开启promisc混杂模式，建立网桥br-100后设置ip，并将eth0桥接到br-100上。</p>
-<p>配置如下，其中一些参数的含义详见: <a href="http://linux.die.net/man/8/brctl">http://linux.die.net/man/8/brctl</a>。</p>
-<div class="highlight"><pre>auto eth0
-iface eth0 inet manual
-    up ifconfig $IFACE 0.0.0.0 up
-    up ip link set $IFACE promisc on
-    down ip link set $IFACE promisc off
-    down ifconfig $IFACE down
-
-auto br-100
-iface br-100 inet static
-    address 192.168.5.91
-    netmask 255.255.255.0
-    network 192.168.5.0
-    broadcast 192.168.5.255
-    gateway 192.168.5.1
-    bridge_ports eth0
-    bridge_fd 0
-    bridge_stp off
-    # bridge_hello 2
-    # bridge_maxage 12
+            <p>因为项目的原因，我决定开始一个专题来分析网络层面的高可用技术(这个划分方式并不准确），主要围绕相关项目使用方式和技术架构。</p>
+<h3>项目</h3>
+<ul>
+<li>LVS</li>
+<li>Keepalived</li>
+<li>Heartbeat</li>
+<li>Pacemaker</li>
+<li>Tcpcopy</li>
+</ul>
+<h3>技术</h3>
+<ul>
+<li>CARP</li>
+<li>VRPR</li>
+</ul>
+<h2>Keepalived</h2>
+<p>使用Keepalived，其使用VRRP协议来保证高可用或热备，用来防止单点故障的发生。</p>
+<p><img alt="IP" src="http://www.keepalived.org/images/Software%20Design.gif" /></p>
+<p>Keepalived也是模块化设计，不同模块复杂不同的功能：</p>
+<ul>
+<li>core：是keepalived的核心，复杂主进程的启动和维护，全局配置文件的加载解析等</li>
+<li>check：负责healthchecker(健康检查)，包括了各种健康检查方式，以及对应的配置的解析包括LVS的配置解析</li>
+<li>vrrp：VRRPD子进程，VRRPD子进程就是来实现VRRP协议的</li>
+<li>libipfwc/libipvs：配置LVS会用到</li>
+</ul>
+<h3>Keepalived 安装</h3>
+<div class="highlight"><pre><span class="nv">$ </span>wget http://www.keepalived.org/software/keepalived-1.2.7.tar.gz
+<span class="nv">$ </span>tar -zxvf keepalived-1.2.7.tar.gz
+<span class="nv">$ </span><span class="nb">cd </span>keepalived-1.2.2
+<span class="nv">$ </span>./configure --prefix<span class="o">=</span>/usr/local/keepalived
+<span class="nv">$ </span>make <span class="o">&amp;&amp;</span> make install
+<span class="c"># 文件拷贝</span>
+<span class="nv">$ </span>cp /usr/local/keepalived/etc/rc.d/init.d/keepalived /etc/init.d/keepalived
+<span class="nv">$ </span>cp /usr/local/keepalived/sbin/keepalived /usr/sbin/
+<span class="nv">$ </span>cp /usr/local/keepalived/etc/sysconfig/keepalived /etc/sysconfig/
+<span class="nv">$ </span>mkdir -p /etc/keepalived/
+<span class="nv">$ </span>cp /usr/local/keepalived/etc/keepalived/keepalived.conf /etc/keepalived/keepalived.conf 
 </pre></div>
 
 
-<h4>bridge_stp</h4>
-<blockquote>
-<p>The Spanning Tree Protocol (STP) is used to allow multiple bridges
-to work together. Each bridge communicates with other bridges to
-discover how they are interconnected. This information is then used
-to eliminate cycles, and provide optimal routing of packets. 
-STP also provides fault tolerance, because it will recompute the
-topology if a bridge or port fails.</p>
-</blockquote>
-<h4>bridge_fd</h4>
-<blockquote>
-<p>This is the forwarding delay for interfaces joining the bridge.</p>
-</blockquote>
-<h3>双网卡配置</h3>
-<p><code>注意</code>：这种配置方法是存在问题的，其基本原则在于<strong>不应该设定同一网段的不同IP在同一主机上</strong>, 其原因见<a href="http://vbird.dic.ksu.edu.tw/linux_server/0230router.php#routing_double">http://vbird.dic.ksu.edu.tw/linux_server/0230router.php#routing_double</a>。</p>
-<p>这里不是为了增加主机的网络流量，而是测试下双网卡的工作模式，因为只有一个网关，也就只有采用这个方式了。分两个IP分给两个网卡接口：192.168.50.91、192.168.11.9，一个网关192.168.5.1。配置如下：</p>
-<div class="highlight"><pre>auto eth0
-iface eth0 inet static
-    address 192.168.50.91
-    netmask 255.255.0.0
-    gateway 192.168.5.1
+<h3>主要配置</h3>
+<h4>两台机器IP配置</h4>
+<ul>
+<li>10.0.3.2 (Master：eth0)</li>
+<li>10.0.3.3 (Backup：eth0)</li>
+</ul>
+<h4>Master 配置</h4>
+<div class="highlight"><pre>! Configuration File for keepalived
 
-auto eth1
-iface eth1 inet static
-    address 192.168.11.91
-    netmask 255.255.0.0
+vrrp_script chk_tcp {
+    script &quot;bash -c &#39;&lt;/dev/tcp/0.0.0.0/8889&#39;&quot; # connects and exits
+    interval 1 # check every 1 second
+    weight -10 # default prio: -2 if connect fails
+    fall 2
+    rise 2
+}
+
+global_defs {
+   notification_email {
+     dwb319@gmail.com
+   }
+   notification_email_from mail@lab.org
+   ! smtp_server 192.168.200.1
+   ! smtp_connect_timeout 30
+   router_id LVS_DEVEL
+}
+
+vrrp_instance VI_1 {
+    state MASTER
+    interface eth0
+    virtual_router_id 51
+    priority 101
+    advert_int 1
+
+    authentication {
+        auth_type PASS
+        auth_pass 1111
+    }
+    track_script {
+        chk_tcp
+    }
+    virtual_ipaddress {
+        10.0.3.100
+    }
+}
 </pre></div>
 
 
-<p>之前的配置出现了其中一个错误:</p>
-<blockquote>
-<p>RTNETLINK answers: File exists <br />
-Failed to bring up eth1.</p>
-</blockquote>
-<p>其出现的原因在于eth0、eth1都配置了相同的gateway，导致会出现默认路由规则绑定到了两个接口上，因为冲突而失败。</p>
-<p>这种方式有潜在的问题，尽管可以用不同的IP来通过不同的网络接口访问主机，但是主机回复内容都是从一个网络接口出去的。我们可以通过 <strong>route -n</strong> 来查看路由规则:</p>
-<div class="highlight"><pre>Destination  Gateway      Genmask      Flags  Metric Use Iface
-0.0.0.0      192.168.5.1  0.0.0.0      UG     100    0 eth0
-192.168.0.0  0.0.0.0      255.255.0.0  U      0      0 eth0
-192.168.0.0  0.0.0.0      255.255.0.0  U      0      0 eth1
+<h4>Backup 配置</h4>
+<div class="highlight"><pre>! Configuration File for keepalived
+
+vrrp_script chk_tcp {
+    script &quot;bash -c &#39;&lt;/dev/tcp/10.0.3.3/8889&#39;&quot; # connects and exits
+    interval 1 # check every 1 second
+    weight -10 # default prio: -2 if connect fails
+    fall 1
+    rise 2
+}
+
+global_defs {
+   notification_email {
+     dwb319@gmail.com
+   }
+   notification_email_from mail@lab.com
+   ! smtp_server 192.168.200.1
+   ! smtp_connect_timeout 30
+   router_id LVS_DEVEL
+}
+
+vrrp_instance VI_1 {
+    state BACKUP
+    interface eth0
+    virtual_router_id 51
+    priority 100
+    advert_int 1
+    authentication {
+        auth_type PASS
+        auth_pass 1111
+    }
+    track_script {
+        chk_tcp
+    }
+    virtual_ipaddress {
+        10.0.3.100
+    }
+}
 </pre></div>
 
 
-<p>根据路由规则和优先级，可以看出所有数据包都是eth0直接广播出去，而无需经过eth1。<strong>这样会造成负载均衡、防火墙无法正确配置，甚至会发生数据包传递错误</strong>，这也是鸟哥说的『重复路由问题』。</p>
-<p>btw, @hellosa 说 bond 技术(双网卡绑定) 可以解决充分利用双网卡的问题，这是另外的话题，我等得空来看下相关的配置方法。</p><script type= "text/javascript">
+<h4>使用</h4>
+<ul>
+<li>/etc/init.d/keepalived start | restart | stop</li>
+<li>通过 ip a 查看virtual ip</li>
+<li>日志信息在/var/log/message</li>
+</ul>
+<p><em>未完待续</em></p><script type= "text/javascript">
     if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
         var mathjaxscript = document.createElement('script');
         mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
@@ -172,9 +237,7 @@ Failed to bring up eth1.</p>
             <nav>
             <ul class="articles_timeline">
  
-                <li class="previous_article">« <a href="http://blog.atomd.me/posts/technology/the-basic-of-scalable-cache-coherence/" title="Previous: 高速缓存一致性的相关笔记和演讲稿">高速缓存一致性的相关笔记和演讲稿</a></li>
- 
-                <li class="next_article"><a href="http://blog.atomd.me/posts/technology/basic-concept-of-routing-and-switching/" title="Next: 路由交换技术的基本概念">路由交换技术的基本概念</a> »</li>
+                <li class="previous_article">« <a href="http://blog.atomd.me/posts/essay/the-sadness-of-comedians/" title="Previous: 喜剧演员的忧伤">喜剧演员的忧伤</a></li>
             </ul>
             </nav>
             </aside>
@@ -183,7 +246,7 @@ Failed to bring up eth1.</p>
     <div class="accordion-group">
         <div class="accordion-heading">
             <a class="accordion-toggle disqus-comment-count" data-toggle="collapse" data-parent="#accordion2" 
-                href="http://blog.atomd.me/posts/technology/network-configuration-notes//#disqus_thread">
+                href="http://blog.atomd.me/posts/technology/network-ha//#disqus_thread">
                 Comments
             </a>
         </div>
@@ -193,8 +256,8 @@ Failed to bring up eth1.</p>
 <div id="disqus_thread"></div>
 <script type="text/javascript">
     var disqus_shortname = 'atomdblog';
-        var disqus_identifier = 'http://blog.atomd.me/posts/technology/network-configuration-notes/';
-    var disqus_url = 'http://blog.atomd.me/posts/technology/network-configuration-notes/';
+        var disqus_identifier = 'http://blog.atomd.me/posts/technology/network-ha/';
+    var disqus_url = 'http://blog.atomd.me/posts/technology/network-ha/';
 
     (function() {
          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
@@ -214,16 +277,13 @@ Failed to bring up eth1.</p>
         <div class="span2" style="float:right;font-size:0.9em;">
  
             <h4>Published</h4>
-            <time pubdate="pubdate" datetime="2012-11-19T19:03:00">Nov 19, 2012</time>
+            <time pubdate="pubdate" datetime="2013-08-25T19:03:00">Aug 25, 2013</time>
             <h4>Category</h4>
             <a class="category-link" href="/categories.html#technology-ref">technology</a> 
             <h4>Tags</h4>
             <ul class="list-of-tags tags-in-article"> 
-                <li><a href="/tags.html#configuration-ref">configuration
-                    <span>2</span>
-</a></li>
-                <li><a href="/tags.html#network-ref">network
-                    <span>2</span>
+                <li><a href="/tags.html#ha-ref">ha
+                    <span>3</span>
 </a></li>
             </ul>
 
