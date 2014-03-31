@@ -1,7 +1,7 @@
 Title: 那些年 那些项目
-Date: 2012-8-25 19:03
+Date: 2012-11-25 19:03
 Description: ""
-Category: life
+Category: essay
 tags: memory, college, project
 Slug: those-years-those-projects
 

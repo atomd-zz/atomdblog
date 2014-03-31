@@ -17,8 +17,6 @@ Slug: network-ha
 - CARP
 - VRPR
 
-*未完待续*
-
 ## Keepalived
 使用Keepalived，其使用VRRP协议来保证高可用或热备，用来防止单点故障的发生。
 
@@ -138,3 +136,6 @@ vrrp_instance VI_1 {
 * /etc/init.d/keepalived start | restart | stop
 * 通过 ip a 查看virtual ip
 * 日志信息在/var/log/message
+
+
+*未完待续*

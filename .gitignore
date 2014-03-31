@@ -11,3 +11,5 @@ Thumbs.db
 *.pid
 output
 env
+pelican-plugins/
+pelican-themes/

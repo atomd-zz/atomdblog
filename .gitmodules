@@ -1,6 +1,0 @@
-[submodule "plugins"]
-	path = plugins
-	url = https://github.com/getpelican/pelican-plugins.git
-[submodule "themes/svbtle"]
-	path = themes/svbtle
-	url = https://github.com/atomd/pelican-svbtle.git
